@@ -18,9 +18,7 @@ ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 ENT.HasBloodDecal = true -- Does it spawn a decal when damaged?
 ENT.HasBloodPool = false -- Does it have a blood pool?
 ENT.CustomBlood_Decal = {} -- Decals to spawn when it's damaged
---------------------------------------------------------------------------------------------------------------
-ENT.DeathCorpseFade = true -- Fades the ragdoll on death
-ENT.DeathCorpseFadeTime = 0.5 -- How much time until the ragdoll fades | Unit = Seconds
+
 
 ENT.VJ_NPC_Class = {"CLASS_AAHW"} -- NPCs with the same class with be allied to each other
 
@@ -65,6 +63,7 @@ function ENT:SetUpGibesOnDeath(dmginfo,hitgroup)
 end
 
 function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
+	corpseEnt:Fire("FadeAndRemove","",0.1)
 	local bones = {
 		"r_upper_arm",
 		"r_lower_arm",

@@ -1,44 +1,15 @@
 AddCSLuaFile("shared.lua")
-include('shared.lua')
-/*-----------------------------------------------
-	*** Copyright (c) 2012-2017 by DrVrej, All rights reserved. ***
-	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
-	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
------------------------------------------------*/
-ENT.Model = {"models/noob_dev2323/madness/npc/grunt_npc.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 30
-ENT.VJ_IsHugeMonster = false -- Is this a huge monster?
-ENT.HullType = HULL_HUMAN
-ENT.HasHull = true -- Set to false to disable HULL
-ENT.HullSizeNormal = true -- set to false to cancel out the self:SetHullSizeNormal()
-ENT.HasSetSolid = true -- set to false to disable SetSolid
-ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
-ENT.BloodColor = "Red" -- The blood type, this will determine what it should use (decal, particle, etc.)
-ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
-ENT.HasBloodDecal = true -- Does it spawn a decal when damaged?
-ENT.HasBloodPool = true -- Does it have a blood pool?
-ENT.BloodPoolSize = "Tiny" -- What's the size of the blood pool?
-ENT.CustomBlood_Decal = {} -- Decals to spawn when it's damaged
---------------------------------------------------------------------------------------------------------------
+include("shared.lua")
 
-ENT.HasDeathAnimation = false -- Does it play an animation when it dies?
-ENT.AnimTbl_Death = {} -- Death Animations
-ENT.DeathAnimationTime = false -- Time until the SNPC spawns its corpse and gets removed
-ENT.DeathAnimationChance = 1 -- Put 1 if you want it to play the animation all the time
-ENT.DeathAnimationDecreaseLengthAmount = 0 -- This will decrease the time until it turns into a corpse
-	-- ====== Corpse Variables ====== --
-ENT.HasDeathRagdoll = true -- If set to false, it will not spawn the regular ragdoll of the SNPC
-ENT.DeathCorpseEntityClass = "UseDefaultBehavior" -- The entity class it creates | "UseDefaultBehavior" = Let the base automatically detect the type
-ENT.DeathCorpseModel = {} -- The corpse model that it will spawn when it dies | Leave empty to use the NPC's model | Put as many models as desired, the base will pick a random one.
-ENT.DeathCorpseCollisionType = COLLISION_GROUP_DEBRIS -- Collision type for the corpse | SNPC Options Menu can only override this value if it's set to COLLISION_GROUP_DEBRIS!
-ENT.DeathCorpseSkin = -1 -- Used to override the death skin | -1 = Use the skin that the SNPC had before it died
-ENT.DeathCorpseSetBodyGroup = true -- Should it get the models bodygroups and set it to the corpse? When set to false, it uses the model's default bodygroups
-ENT.DeathCorpseBodyGroup = VJ_Set(-1, -1) -- #1 = the category of the first bodygroup | #2 = the value of the second bodygroup | Set -1 for #1 to let the base decide the corpse's bodygroup
-ENT.DeathCorpseSubMaterials = nil -- Apply a table of indexes that correspond to a sub material index, this will cause the base to copy the NPC's sub material to the corpse.
+ENT.Model = {"models/noob_dev2323/madness/npc/grunt_npc.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
+ENT.StartHealth = 20 -- or you can use a convar: GetConVarNumber("vj_dum_dummy_h")
+ENT.VJ_NPC_Class = {"CLASS_AAHW"} -- NPCs with the same class with be allied to each other
+
+
 ENT.DeathCorpseFade = false -- Fades the ragdoll on death
 ENT.DeathCorpseFadeTime = 10 -- How much time until the ragdoll fades | Unit = Seconds
 ENT.DeathCorpseSetBoneAngles = true -- This can be used to stop the corpse glitching or flying on death
-ENT.DeathCorpseApplyForce = true -- If false, force will not be applied to the corpse
+ENT.DeathCorpseApplyForce = false -- If false, force will not be applied to the corpse
 ENT.WaitBeforeDeathTime = 0 -- Time until the SNPC spawns its corpse and gets removed
 
 	-- ====== Dismemberment/Gib Variables ====== --
@@ -50,7 +21,7 @@ ENT.HasGibDeathParticles = true -- Does it spawn particles on death or when it g
 ENT.DeathCorpseSetBoneAngles = true
 	-- To use event-based attacks, set this to false:
 ENT.RunAwayOnUnknownDamage = true -- Should run away on damage
-ENT.VJ_NPC_Class = {"CLASS_AAHW"} -- NPCs with the same class with be allied to each other
+
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
 ENT.MeleeAttackDamageType = DMG_CLUB
 ENT.AnimTbl_MeleeAttack = {"vjges_punch01","vjges_punch02"} -- Melee Attack Animations
@@ -78,7 +49,6 @@ ENT.SoundTbl_BeforeMeleeAttack = {"noob_dev2323/madness/grunt/Grunt.wav","noob_d
 
 ENT.CallForHelp = true -- Does the SNPC call for help?
 ENT.grunt_NextStumbleT = CurTime() + 3
----------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.totalDamage = {}
 end
@@ -105,6 +75,21 @@ function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup)
 	    	if hitgroup == HITGROUP_HEAD and self.totalDamage[hitgroup] > 12000	 then    -- Dismember heads code
 		    	self.head_less = true
    	    	end
+   	    	if hitgroup == 13 and self.totalDamage[hitgroup] > 4000	 then    -- Dismember heads code
+	    		self.R_part = true
+        	end
+        	if hitgroup == 14 and self.totalDamage[hitgroup] > 4000	 then    -- Dismember heads code
+	    		self.back = true
+        	end
+   	    	if hitgroup == 15 and self.totalDamage[hitgroup] > 4000	 then    -- Dismember heads code
+	    		self.head_less = true
+        	end
+        	if hitgroup == 16 and self.totalDamage[hitgroup] > 4000	 then    -- Dismember heads code
+	    		self.testa = true
+        	end
+        	if hitgroup == 17 and self.totalDamage[hitgroup] > 4000	 then    -- Dismember heads code
+	    		self.L_part = true
+        	end
 	    	if hitgroup == HITGROUP_HEAD and self.totalDamage[hitgroup] > 4000	 then    -- Dismember heads code
 	    		self.head_damage = true
         	end
@@ -155,6 +140,22 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 		if self.head_less then return end
 		corpseEnt:SetBodygroup(1, 2)
 	end
+	if self.R_part then
+		if self.head_less then return end
+		corpseEnt:SetBodygroup(1, 3)
+	end
+	if self.back then
+		if self.head_less then return end
+		corpseEnt:SetBodygroup(1, 4)
+	end
+	if self.L_part then
+		if self.head_less then return end
+		corpseEnt:SetBodygroup(1, 5)
+	end
+	if self.testa then
+		if self.head_less then return end
+		corpseEnt:SetBodygroup(1, 2)
+	end
 	if self.gibbed_aiaia then
         sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
 		local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("head"))
@@ -184,11 +185,4 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo, hitgroup)
 		end )
 	end
 end
----------------------------------------------------------------------------------------------------------------------------------------------
-	-- All functions and variables are located inside the base files. It can be found in the GitHub Repository: https://github.com/DrVrej/VJ-Base
-
-/*-----------------------------------------------
-	*** Copyright (c) 2012-2017 by DrVrej, All rights reserved. ***
-	No parts of this code or any of its contents may be reproduced, copied, modified or adapted,
-	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
------------------------------------------------*/
+-- All functions and variables are located inside the base files. It can be found in the GitHub Repository: https://github.com/DrVrej/VJ-Base
