@@ -28,80 +28,12 @@ ENT.SoundTbl_Death = {"noob_dev2323/madness/vr_guy/VRGuyDeath1.wav","noob_dev232
 
 ENT.PainSoundLevel = 130
 ENT.DeathSoundLevel = 130
+
+ENT.isVR = true  
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.totalDamage = {}
 	self:SetMaterial("models/grunt/debugwireframe") -- set material
-end
-function ENT:MeleeAttackKnockbackVelocity(hitEnt)
-	return self:GetForward()*math.random(100, 140) + self:GetUp()*10
-end
-function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup) 
-	if GetConVar("vj_madness_gore"):GetInt() == 1 then
-   		local damageForce = dmginfo:GetDamageForce():Length()
-    	self.totalDamage[hitgroup] = (self.totalDamage[hitgroup] or 0) + damageForce
-			if hitgroup == HITGROUP_HEAD and self.totalDamage[hitgroup] > 12000	 then    -- Dismember heads code
-				self.head_less = true
-   		 	end
-		if hitgroup == HITGROUP_HEAD and self.totalDamage[hitgroup] > 4000	 then    -- Dismember heads code
-			self.head_damage = true
-    	end
-		if hitgroup == HITGROUP_LEFTLEG and self.totalDamage[hitgroup] > 4000	 then    -- Dismember heads code
-			madness_combat_snpc_doText(self,"my LEG")
-			self.l_leg = true
-   		end
-		if hitgroup == HITGROUP_RIGHTLEG and self.totalDamage[hitgroup] > 4000	 then    -- Dismember heads code
-			madness_combat_snpc_doText(self,"my LEG")
-			self.R_leg = true
-    	end
-	end
-end
----------------------------------------------------------------------------------------------------------------------------------------------
----------------------------------------------------------------------------------------------------------------------------------------------
-function ENT:SetUpGibesOnDeath(dmginfo,hitgroup)
-	self.gibbed_aiaia = true
-end
-
-function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
-	corpseEnt:Fire("FadeAndRemove","",0.1)
-	local bones = {
-		"r_upper_arm",
-		"r_lower_arm",
-		"l_upper_arm",
-		"l_lower_arm",
-	}
-	for k, v in pairs( bones ) do
-		local head_bone = corpseEnt:LookupBone(v)
-		local bone = corpseEnt:TranslateBoneToPhysBone(head_bone)
-		local colide = corpseEnt:GetPhysicsObjectNum( bone )
-		colide:EnableCollisions(false)
-		colide:EnableGravity(false)
-	end
-	for i = 0, corpseEnt:GetPhysicsObjectCount() - 1 do
-		local colide = corpseEnt:GetPhysicsObjectNum( i )
-		colide:EnableGravity(false)
-    end
-	if self.head_less then
-		corpseEnt:SetBodygroup(1, 1)
-	end
-	if self.head_damage then
-		if self.head_less then return end
-		corpseEnt:SetBodygroup(1, 2)
-	end
-	if self.gibbed_aiaia then
-		local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("head"))
-		corpseEnt:RemoveInternalConstraint(bone)
-	end
-	if self.l_leg then
-		local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("L_foot"))
-		corpseEnt:RemoveInternalConstraint(bone)
-	end
-	if self.R_leg then
-		local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("R_foot"))
-		corpseEnt:RemoveInternalConstraint(bone)
-	end
-	dmginfo:SetDamageForce(dmginfo:GetDamageForce())
-	corpseEnt:TakeDamageInfo(dmginfo)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- All functions and variables are located inside the base files. It can be found in the GitHub Repository: https://github.com/DrVrej/VJ-Base

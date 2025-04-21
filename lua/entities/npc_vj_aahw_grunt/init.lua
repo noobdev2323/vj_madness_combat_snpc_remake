@@ -6,14 +6,14 @@ ENT.StartHealth = 20 -- or you can use a convar: GetConVarNumber("vj_dum_dummy_h
 ENT.VJ_NPC_Class = {"CLASS_AAHW"} -- NPCs with the same class with be allied to each other
 
 ENT.DeathCorpseSetBoneAngles = true -- This can be used to stop the corpse glitching or flying on death
-ENT.DeathCorpseApplyForce = false -- If false, force will not be applied to the corpse
+ENT.DeathCorpseApplyForce = true  -- If false, force will not be applied to the corpse
 
 
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
 ENT.MeleeAttackDamageType = DMG_CLUB
 ENT.AnimTbl_MeleeAttack = {"vjges_punch01","vjges_punch02"} -- Melee Attack Animations
 ENT.MeleeAttackAnimationAllowOtherTasks = true -- If set to true, the animation will not stop other tasks from playing, such as chasing | Useful for gesture attacks!
-ENT.MeleeAttackDistance = 30 -- How close does it have to be until it attacks?
+ENT.MeleeAttackDistance = 50 -- How close does it have to be until it attacks?
 ENT.MeleeAttackDamageDistance = 120 -- How far does the damage go?
 ENT.TimeUntilMeleeAttackDamage = 0.5 -- This counted in seconds | This calculates the time until it hits something
 ENT.NextAnyAttackTime_Melee = 0	 -- How much time until it can use any attack again? | Counted in Seconds
@@ -29,17 +29,20 @@ ENT.FlinchAnimationDecreaseLengthAmount = 0 -- This will decrease the time it ca
 ENT.HitGroupFlinching_DefaultWhenNotHit = true -- If it uses hitgroup flinching, should it do the regular flinch if it doesn't hit any of the specified hitgroups?
 
 ENT.HasSounds = true -- Put to false to disable ALL sound
-ENT.SoundTbl_MeleeAttack = {"killer_chicken/peck.wav"}
+ENT.SoundTbl_MeleeAttack = {"noob_dev2323/madness/melee/Punch1.wav","noob_dev2323/madness/melee/Punch2.wav","noob_dev2323/madness/melee/Punch3.wav","noob_dev2323/madness/melee/Punch4.wav","noob_dev2323/madness/melee/Punch5.wav"}
 ENT.SoundTbl_BeforeMeleeAttack = {"noob_dev2323/madness/grunt/Grunt.wav","noob_dev2323/madness/grunt/Grunt-1.wav","noob_dev2323/madness/grunt/Grunt-2.wav","noob_dev2323/madness/grunt/Grunt-3.wav","noob_dev2323/madness/grunt/Grunt-4.wav","noob_dev2323/madness/grunt/Grunt-5.wav","noob_dev2323/madness/grunt/Grunt-6.wav","noob_dev2323/madness/grunt/Grunt-7.wav","noob_dev2323/madness/grunt/Grunt-8.wav"}
 
+
+ENT.PropInteraction = false  -- Controls how it should interact with props
 ENT.CallForHelp = true -- Does the SNPC call for help?
 ENT.grunt_NextStumbleT = CurTime() + 3
+ENT.isVR = false 
+ENT.grunt_status = {
+	life = 30
+}
 function ENT:CustomOnInitialize()
 	self.totalDamage = {}
 	self.GetDamageType = {} --need to gib work
-end
-function ENT:MeleeAttackKnockbackVelocity(hitEnt)
-	return self:GetForward()*math.random(100, 140) + self:GetUp()*10
 end
 function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup) 
 	local dotext = math.random(1,2)
@@ -51,37 +54,39 @@ function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup)
    		local damageForce = dmginfo:GetDamageForce():Length()
     	self.totalDamage[hitgroup] = (self.totalDamage[hitgroup] or 0) + damageForce
 		if hitgroup == 13 or hitgroup == 14 or hitgroup == 17 or hitgroup == 16 then
-			if self.totalDamage[hitgroup] > 12000  then
+			if dmginfo:IsDamageType(DMG_SLASH) then
+				local slice = math.random(1,2)
+				if slice == 2 then
+					self.gibbed_aiaia = true
+				elseif slice == 1 then 
+					self.head_slash = true
+			end
+			elseif self.totalDamage[hitgroup] > 12000 then
 				self.head_less = true	
 			end
         end
-   	    if hitgroup == 13 and self.totalDamage[hitgroup] > 4000	 then
-	    	self.head_damege_type = 3
-        end
-        if hitgroup == 14 and self.totalDamage[hitgroup] > 4000	 then
-	    	self.head_damege_type = 4
-        end
-   	    if hitgroup == 15 and self.totalDamage[hitgroup] > 4000	 then
-	    	self.head_less = true
-        end
-        if hitgroup == 16 and self.totalDamage[hitgroup] > 4000	 then  
-	    	self.head_damege_type = 2
-        end
-        if hitgroup == 17 and self.totalDamage[hitgroup] > 4000	 then
-	    	self.head_damege_type = 5
-        end
-
-		if hitgroup == HITGROUP_LEFTLEG and self.totalDamage[hitgroup] > 4000	 then    -- Dismember heads code
-			madness_combat_snpc_doText(self,"my LEG")
-			self.l_leg = true
-   		end
-		if hitgroup == HITGROUP_RIGHTLEG and self.totalDamage[hitgroup] > 4000	 then    -- Dismember heads code
-			madness_combat_snpc_doText(self,"my LEG")
-			self.R_leg = true
-    	end
+		if self.totalDamage[hitgroup] > 4000 then
+			if hitgroup == 13 then
+				self.head_damege_type = 3 
+			elseif hitgroup == 14 then
+				self.head_damege_type = 4
+			elseif hitgroup == 15 then
+				self.head_less = true
+			elseif hitgroup == 16 then  
+				self.head_damege_type = 2
+			elseif hitgroup == 17 then
+				self.head_damege_type = 5
+			end
+			if hitgroup == HITGROUP_LEFTLEG then --Dismember foot code
+				madness_combat_snpc_doText(self,"my LEG")
+				self.l_leg = true
+			elseif hitgroup == HITGROUP_RIGHTLEG then --Dismember foot code
+				madness_combat_snpc_doText(self,"my LEG")
+				self.R_leg = true
+			end
+		end
 	end
 end
----------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:SetUpGibesOnDeath(dmginfo,hitgroup)
 	self.gibbed_aiaia = true
@@ -100,7 +105,13 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 		local colide = corpseEnt:GetPhysicsObjectNum( bone )
 		colide:EnableCollisions(false)
 	end
-
+	if self.isVR == true then
+		corpseEnt:Fire("FadeAndRemove","",0.1)
+		for i = 0, corpseEnt:GetPhysicsObjectCount() - 1 do
+			local colide = corpseEnt:GetPhysicsObjectNum( i )
+			colide:EnableGravity(false)
+		end
+	end
 
 	if self.gibbed_aiaia then
         sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
@@ -117,7 +128,7 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 		sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
 	end
 	if self.head_damege_type then
-		if self.head_less then return end 
+		if self.head_less or self.head_slash or self.gibbed_aiaia then return end 
 		corpseEnt:SetBodygroup(1,self.head_damege_type)
 		sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
 	end
@@ -129,7 +140,7 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 		local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("R_foot"))
 		corpseEnt:RemoveInternalConstraint(bone)
 	end
-	dmginfo:SetDamageForce(dmginfo:GetDamageForce())
+	dmginfo:SetDamageForce(dmginfo:GetDamageForce()/3)
 	corpseEnt:TakeDamageInfo(dmginfo)
 	vj_madness_make_corpse_destructible(corpseEnt)
 end
