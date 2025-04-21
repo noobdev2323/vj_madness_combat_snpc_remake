@@ -33,7 +33,7 @@ ENT.isVR = true
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.totalDamage = {}
-	self:SetMaterial("models/grunt/debugwireframe") -- set material
+	self:SetMaterial("models/shaders/Wireframe") -- set material
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- All functions and variables are located inside the base files. It can be found in the GitHub Repository: https://github.com/DrVrej/VJ-Base
