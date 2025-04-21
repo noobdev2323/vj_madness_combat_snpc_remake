@@ -1,3 +1,4 @@
+CreateConVar("vj_madness_gore", "1", FCVAR_ARCHIVE, "vj_madness_gore")
 CreateConVar("vj_madness_can_gib_ragdoll", "1", FCVAR_ARCHIVE, "vj_madness_can_gib_ragdoll")
 util.AddNetworkString( "vj_madness_combat.text" ) 
 
