@@ -53,14 +53,14 @@ function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup)
 	if GetConVar("vj_madness_gore"):GetInt() == 1 then
    		local damageForce = dmginfo:GetDamageForce():Length()
     	self.totalDamage[hitgroup] = (self.totalDamage[hitgroup] or 0) + damageForce
-		if hitgroup == 13 or hitgroup == 14 or hitgroup == 17 or hitgroup == 16 then
+		if hitgroup == 13 or hitgroup == 14 or hitgroup == 17 or hitgroup == 16 or hitgroup == 15 and self.totalDamage[hitgroup] > 12000 then
 			if dmginfo:IsDamageType(DMG_SLASH) then
 				local slice = math.random(1,2)
 				if slice == 2 then
 					self.gibbed_aiaia = true
 				elseif slice == 1 then 
 					self.head_slash = true
-			end
+				end
 			elseif self.totalDamage[hitgroup] > 12000 then
 				self.head_less = true	
 			end
@@ -114,14 +114,18 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 	end
 
 	if self.gibbed_aiaia then
-        sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
-		local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("head"))
-		corpseEnt:RemoveInternalConstraint(bone)
+		if not self.head_slash then
+			sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
+			local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("head"))
+			corpseEnt:RemoveInternalConstraint(bone)
+		end
 	end
 	if self.head_slash then
 		corpseEnt:SetBodygroup(1, 6)
-		self:CreateGibEntity("prop_physics","models/noob_dev2323/madness/gibs/half_head.mdl",{Pos=corpseEnt:LocalToWorld(Vector(0,0,54)),Ang=corpseEnt:GetAngles()+Angle(0,0,0),Vel=corpseEnt:GetRight()*math.Rand(-350,350)+self:GetForward()*math.Rand(-200,-300)})	
-		sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
+		if self.isVR == false then
+			self:CreateGibEntity("prop_physics","models/noob_dev2323/madness/gibs/half_head.mdl",{Pos=corpseEnt:LocalToWorld(Vector(0,0,54)),Ang=corpseEnt:GetAngles()+Angle(0,0,0),Vel=corpseEnt:GetRight()*math.Rand(-350,350)+self:GetForward()*math.Rand(-200,-300)})	
+			sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
+		end
 	end
 	if self.head_less then
 		corpseEnt:SetBodygroup(1, 1)

@@ -7,17 +7,11 @@ include('shared.lua')
 -----------------------------------------------*/
 ENT.Model = {"models/noob_dev2323/madness/npc/grunt_npc.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 30
-ENT.VJ_IsHugeMonster = false -- Is this a huge monster?
-ENT.HullType = HULL_HUMAN
-ENT.HasHull = true -- Set to false to disable HULL
-ENT.HullSizeNormal = true -- set to false to cancel out the self:SetHullSizeNormal()
-ENT.HasSetSolid = true -- set to false to disable SetSolid
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Green" -- The blood type, this will determine what it should use (decal, particle, etc.)
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
 ENT.HasBloodDecal = true -- Does it spawn a decal when damaged?
 ENT.HasBloodPool = false -- Does it have a blood pool?
-ENT.CustomBlood_Decal = {} -- Decals to spawn when it's damaged
 
 
 ENT.VJ_NPC_Class = {"CLASS_AAHW"} -- NPCs with the same class with be allied to each other
@@ -33,7 +27,7 @@ ENT.isVR = true
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:CustomOnInitialize()
 	self.totalDamage = {}
-	self:SetMaterial("models/shaders/Wireframe") -- set material
+	self:SetMaterial("models/noob_dev2323/madness_combat/shaders/Wireframe") -- set material
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- All functions and variables are located inside the base files. It can be found in the GitHub Repository: https://github.com/DrVrej/VJ-Base
