@@ -36,10 +36,12 @@ ENT.ConstantlyFaceEnemy_IfVisible = false  -- Should it only face the enemy if i
 ENT.PropInteraction = false  -- Controls how it should interact with props
 ENT.CallForHelp = true -- Does the SNPC call for help?
 ENT.grunt_NextStumbleT = CurTime() + 3
+ENT.grunt_NextText = CurTime() + 3
 ENT.isVR = false 
 ENT.grunt_status = {
 	life = 30
 }
+
 function ENT:CustomOnInitialize()
 	self.totalDamage = {}
 	self.GetDamageType = {} --need to gib work
@@ -47,9 +49,11 @@ end
 function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup) 
 	local dotext = math.random(1,2)
 	if dotext == 2 then
-        madness_combat_snpc_doText(self,"voce vai conheser o pai reabilitado")
+		if CurTime() > self.grunt_NextText then
+			self.grunt_NextText = CurTime() + 3
+			madness_combat_snpc_doText(self,table.Random( madness_npc_text ))	
+		end
 	end
-
 	if GetConVar("vj_madness_gore"):GetInt() == 1 then
    		local damageForce = dmginfo:GetDamageForce():Length()
     	self.totalDamage[hitgroup] = (self.totalDamage[hitgroup] or 0) + damageForce
@@ -89,10 +93,29 @@ function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 function ENT:SetUpGibesOnDeath(dmginfo,hitgroup)
+	if self.HasGibDeathParticles == true then
+		local bloodeffect = EffectData()
+		bloodeffect:SetOrigin(self:GetPos() +self:OBBCenter())
+		bloodeffect:SetColor(VJ_Color2Byte(Color(130,19,10)))
+		bloodeffect:SetScale(50)
+		util.Effect("VJ_Blood1",bloodeffect)
+	end
 	self.gibbed_aiaia = true
 end
 
 function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
+	if self.isVR == true then
+		corpseEnt:Fire("FadeAndRemove","",0.1)
+		for i = 0, corpseEnt:GetPhysicsObjectCount() - 1 do
+			local colide = corpseEnt:GetPhysicsObjectNum( i )
+			colide:EnableGravity(false)
+		end
+	else
+		dmginfo:SetDamageForce(dmginfo:GetDamageForce()/3)
+		corpseEnt:TakeDamageInfo(dmginfo)
+		vj_madness_make_corpse_destructible(corpseEnt)
+	end
+
 	local bones = {
 		"r_upper_arm",
 		"r_lower_arm",
@@ -105,15 +128,9 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 		local colide = corpseEnt:GetPhysicsObjectNum( bone )
 		colide:EnableCollisions(false)
 	end
-	if self.isVR == true then
-		corpseEnt:Fire("FadeAndRemove","",0.1)
-		for i = 0, corpseEnt:GetPhysicsObjectCount() - 1 do
-			local colide = corpseEnt:GetPhysicsObjectNum( i )
-			colide:EnableGravity(false)
-		end
-	end
+
 	if self.gibbed_aiaia then
-		if not self.head_slash then
+		if not self.head_slash or not self.head_less then
 			sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
 			local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("head"))
 			corpseEnt:RemoveInternalConstraint(bone)
@@ -128,6 +145,13 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 	end
 	if self.head_less then
 		corpseEnt:SetBodygroup(1, 1)
+		if self.HasGibOnDeathEffects and not self.isVR == true then
+			local bloodeffect = EffectData()
+			bloodeffect:SetOrigin(self:LocalToWorld(Vector(0,0,27)) +self:OBBCenter())
+			bloodeffect:SetColor(VJ_Color2Byte(Color(130,19,10)))
+			bloodeffect:SetScale(30)
+			util.Effect("VJ_Blood1",bloodeffect)
+		end
 		sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
 	end
 	if self.head_damege_type then
@@ -143,9 +167,6 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 		local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("R_foot"))
 		corpseEnt:RemoveInternalConstraint(bone)
 	end
-	dmginfo:SetDamageForce(dmginfo:GetDamageForce()/3)
-	corpseEnt:TakeDamageInfo(dmginfo)
-	vj_madness_make_corpse_destructible(corpseEnt)
 end
 function ENT:CustomOnTakeDamage_AfterDamage(dmginfo, hitgroup)
 	if ( hitgroup == HITGROUP_LEFTLEG ) or ( hitgroup == HITGROUP_RIGHTLEG ) and self:GetActivity() == ACT_RUN and math.random(1, 2) == 1 and CurTime() < self.grunt_NextStumbleT then
