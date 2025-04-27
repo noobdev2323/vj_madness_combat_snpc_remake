@@ -29,6 +29,11 @@ end
 hook.Add("EntityTakeDamage", "EntityMadness_ent_TakeDamage", function(target, dmginfo)
 	if GetConVar("vj_madness_can_gib_ragdoll"):GetBool() == true then
 		if target:IsRagdoll() and target.vj_madness_destructible_Corpse and CurTime() > target.vj_madness_Start_delay then 
+			if dmgType == DMG_CRUSH && dmginfo:GetDamage() < 500 then
+				doDamege = false 
+			elseif dmginfo:IsExplosionDamage() && dmg_force >= 10 then 
+				dmginfo:ScaleDamage(3) --escale the damege on explosions     
+			end 
 			local hit = madness_GetClosestPhysBone(target,dmginfo) --get hit physbone
 			if hit == nil then
 				return 
@@ -59,11 +64,7 @@ hook.Add("EntityTakeDamage", "EntityMadness_ent_TakeDamage", function(target, dm
 				local doDamege = true 
 				local dmg_force = dmginfo:GetDamage()
 
-				if dmgType == DMG_CRUSH && dmginfo:GetDamage() < 500 then
-					doDamege = false 
-				elseif dmginfo:IsExplosionDamage() && dmg_force >= 10 then 
-					dmginfo:ScaleDamage(3) --escale the damege on explosions     
-				end 
+
 				if doDamege == true  then 
 					target.ragdoll_Health = target.ragdoll_Health - dmginfo:GetDamage()		
 				end
@@ -120,6 +121,7 @@ function madness_gib_head(target)
 	madness_physbone_colide(target,"head")
 	local head_bone = target:LookupBone( "head" )
 	target:ManipulateBoneScale(head_bone,Vector(0,0,0))
+	target:SetSkin(1)
 end
 function madness_physbone_colide(target,bone,disable_motion)
 	local colide = target:GetPhysicsObjectNum(target:TranslateBoneToPhysBone(target:LookupBone(bone))) --get bone id

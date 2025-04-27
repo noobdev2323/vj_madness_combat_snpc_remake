@@ -134,6 +134,7 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 			sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
 			local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("head"))
 			corpseEnt:RemoveInternalConstraint(bone)
+			corpseEnt:SetSkin(1)
 		end
 	end
 	if self.head_slash then
