@@ -29,6 +29,9 @@ end
 hook.Add("EntityTakeDamage", "EntityMadness_ent_TakeDamage", function(target, dmginfo)
 	if GetConVar("vj_madness_can_gib_ragdoll"):GetBool() == true then
 		if target:IsRagdoll() and target.vj_madness_destructible_Corpse and CurTime() > target.vj_madness_Start_delay then 
+			local doDamege = true 
+			local dmg_force = dmginfo:GetDamage()
+
 			if dmgType == DMG_CRUSH && dmginfo:GetDamage() < 500 then
 				doDamege = false 
 			elseif dmginfo:IsExplosionDamage() && dmg_force >= 10 then 
@@ -61,10 +64,6 @@ hook.Add("EntityTakeDamage", "EntityMadness_ent_TakeDamage", function(target, dm
 				madness_physbone_colide(target,"L_foot",true)
 			end
 			if !dmginfo:IsBulletDamage() or !dmginfo:IsDamageType(DMG_NEVERGIB) then
-				local doDamege = true 
-				local dmg_force = dmginfo:GetDamage()
-
-
 				if doDamege == true  then 
 					target.ragdoll_Health = target.ragdoll_Health - dmginfo:GetDamage()		
 				end

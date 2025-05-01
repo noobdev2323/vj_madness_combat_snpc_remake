@@ -1,8 +1,12 @@
 madness_npc_text = {
-    "aiai",
-    "seu bobao",
-    "seu bostao",
-    "seu coco",
-    "vem briga vem",
-    "seu fia da puta"
+    "crud!",
+    "hey!",
+    "die!",
+    "You messed with the wrong guy!",
+    "you will pay for that!",
+    "Burn in hell!",
+    "I will crush you!",
+    "Take this!",
+    "You're dead!",
+    "Prepare to die!"
 }

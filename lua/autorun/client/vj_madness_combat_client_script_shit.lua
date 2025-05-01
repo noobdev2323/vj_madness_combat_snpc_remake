@@ -6,7 +6,10 @@ net.Receive("vj_madness_combat.text", function()
         npc.madness_ChatTime = CurTime() + 3
     end
 end)
-
+concommand.Add ( "raids_spawn_aahw_grunt", function(ply, cmd, args, argStr) 
+    local maxNPCs = #args > 0 and args[1] or 64
+    ply:ConCommand("raids_server_aahw_grunt" .. " " .. maxNPCs)
+end)
 local maxChatDistance = 500
 
 hook.Add("PostDrawTranslucentRenderables", "Draw_madness_NPCChat", function()
