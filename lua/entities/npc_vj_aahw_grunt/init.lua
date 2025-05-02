@@ -166,6 +166,10 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 		sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
 		local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("head"))
 		corpseEnt:RemoveInternalConstraint(bone)
+		local head_bone = corpseEnt:LookupBone("head")
+		local bone = corpseEnt:TranslateBoneToPhysBone(head_bone)
+		local colide = corpseEnt:GetPhysicsObjectNum( bone )
+		colide:AddVelocity(dmginfo:GetDamageForce())
 		corpseEnt:SetSkin(1)
 	end
 	if self.gib_type == "half" then
@@ -179,6 +183,10 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 		sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
 		local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("torax"))
 		corpseEnt:RemoveInternalConstraint(bone)
+		local head_bone = corpseEnt:LookupBone("torax")
+		local bone = corpseEnt:TranslateBoneToPhysBone(head_bone)
+		local colide = corpseEnt:GetPhysicsObjectNum( bone )
+		colide:AddVelocity(Vector(0,0,999))
 		corpseEnt:SetBodygroup(0, 1)
 	end
 	if self.gib_type == "head_slash" then
