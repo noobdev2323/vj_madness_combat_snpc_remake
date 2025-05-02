@@ -94,7 +94,7 @@ function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup)
 				self.gib_type = "head_less"
 			end
         end
-		if hitgroup == 2 or hitgroup == 3 and dmginfo:IsDamageType(DMG_SLASH) and self.totalDamage[hitgroup] > 12000 then --Dismember foot code
+		if dmginfo:IsDamageType(DMG_SLASH) and self.totalDamage[hitgroup] > 12000 and hitgroup == 2 or hitgroup == 3 then --Dismember foot code
 			self.gib_type = "half"
 		end
 	end
@@ -148,12 +148,15 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 			bloodeffect:Fire("Start","",0)
 			bloodeffect:Fire("Kill","",7)
 		end
-		self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk2.mdl",{Pos=self:GetAttachment(self:LookupAttachment("2")).Pos,Ang=self:GetAngles(),Vel=self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10)})
-		self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk1.mdl",{Pos=self:GetAttachment(self:LookupAttachment("5")).Pos,Ang=self:GetAngles(),Vel=self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10)})
-		self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk6.mdl",{Pos=self:GetAttachment(self:LookupAttachment("4")).Pos,Ang=self:GetAngles(),Vel=self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10)})
-		self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk4.mdl",{Pos=self:GetAttachment(self:LookupAttachment("head_gib")).Pos,Ang=self:GetAngles(),Vel=self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10)})
-		self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk5.mdl",{Pos=self:GetAttachment(self:LookupAttachment("head_gib")).Pos,Ang=self:GetAngles(),Vel=self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10)})
-		self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk3.mdl",{Pos=self:GetAttachment(self:LookupAttachment("head")).Pos,Ang=self:GetAngles(),Vel=self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10)})
+		if self.isVR == false then
+			self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk2.mdl",{Pos=self:GetAttachment(self:LookupAttachment("2")).Pos,Ang=self:GetAngles(),Vel=self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10)})
+			self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk1.mdl",{Pos=self:GetAttachment(self:LookupAttachment("5")).Pos,Ang=self:GetAngles(),Vel=self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10)})
+			self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk6.mdl",{Pos=self:GetAttachment(self:LookupAttachment("4")).Pos,Ang=self:GetAngles(),Vel=self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10)})
+			self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk4.mdl",{Pos=self:GetAttachment(self:LookupAttachment("head_gib")).Pos,Ang=self:GetAngles(),Vel=self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10)})
+			self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk5.mdl",{Pos=self:GetAttachment(self:LookupAttachment("head_gib")).Pos,Ang=self:GetAngles(),Vel=self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10)})
+			self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk3.mdl",{Pos=self:GetAttachment(self:LookupAttachment("head")).Pos,Ang=self:GetAngles(),Vel=self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10)})
+		end
+
 		corpseEnt:SetBodygroup(1, 1)
 		sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
 	end
