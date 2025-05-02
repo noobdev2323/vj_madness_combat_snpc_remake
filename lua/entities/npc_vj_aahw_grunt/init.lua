@@ -94,8 +94,10 @@ function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup)
 				self.gib_type = "head_less"
 			end
         end
-		if dmginfo:IsDamageType(DMG_SLASH) and self.totalDamage[hitgroup] > 12000 and hitgroup == 2 or hitgroup == 3 then --Dismember foot code
-			self.gib_type = "half"
+		if hitgroup == 2 or hitgroup == 3 then --Dismember foot code
+			if dmginfo:IsDamageType(DMG_SLASH) and self.totalDamage[hitgroup] > 12000 then
+				self.gib_type = "half"
+			end
 		end
 	end
 end
