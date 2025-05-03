@@ -4,7 +4,6 @@ include("shared.lua")
 ENT.Model = {"models/noob_dev2323/madness/npc/grunt_npc.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 20 -- or you can use a convar: GetConVarNumber("vj_dum_dummy_h")
 ENT.VJ_NPC_Class = {"CLASS_AAHW"} -- NPCs with the same class with be allied to each other
-
 ENT.DeathCorpseSetBoneAngles = true -- This can be used to stop the corpse glitching or flying on death
 ENT.DeathCorpseApplyForce = true  -- If false, force will not be applied to the corpse
 
@@ -22,7 +21,7 @@ ENT.MeleeAttackDamage = 10
 ENT.AnimTbl_Flinch = {"vjges_flinch"} -- If it uses normal based animation, use this
 ENT.CanFlinch = 1 -- 0 = Don't flinch | 1 = Flinch at any damage | 2 = Flinch only from certain damages
 ENT.FlinchChance = 1 -- Chance of it flinching from 1 to x | 1 will make it always flinch
-	-- To let the base automatically detect the animation duration, set this to false:
+
 ENT.NextMoveAfterFlinchTime = false -- How much time until it can move, attack, etc.
 ENT.NextFlinchTime = 0.5 -- How much time until it can flinch again?
 ENT.FlinchAnimationDecreaseLengthAmount = 0 -- This will decrease the time it can move, attack, etc. | Use it to fix animation pauses after it finished the flinch animation
@@ -32,9 +31,29 @@ ENT.HasSounds = true -- Put to false to disable ALL sound
 ENT.SoundTbl_MeleeAttack = {"noob_dev2323/madness/melee/Punch1.wav","noob_dev2323/madness/melee/Punch2.wav","noob_dev2323/madness/melee/Punch3.wav","noob_dev2323/madness/melee/Punch4.wav","noob_dev2323/madness/melee/Punch5.wav"}
 ENT.SoundTbl_BeforeMeleeAttack = {"noob_dev2323/madness/grunt/Grunt.wav","noob_dev2323/madness/grunt/Grunt-1.wav","noob_dev2323/madness/grunt/Grunt-2.wav","noob_dev2323/madness/grunt/Grunt-3.wav","noob_dev2323/madness/grunt/Grunt-4.wav","noob_dev2323/madness/grunt/Grunt-5.wav","noob_dev2323/madness/grunt/Grunt-6.wav","noob_dev2323/madness/grunt/Grunt-7.wav","noob_dev2323/madness/grunt/Grunt-8.wav"}
 
+ENT.Weapon_NoSpawnMenu = true -- If set to true, the NPC weapon setting in the spawnmenu will not be applied for this SNPC
+ENT.HasWeaponBackAway = true  -- Should the SNPC back away if the enemy is close?
 ENT.ConstantlyFaceEnemy_IfVisible = false   -- Should it only face the enemy if it's visible?
 ENT.PropInteraction = false  -- Controls how it should interact with props
 ENT.CallForHelp = true -- Does the SNPC call for help?
+
+ENT.CombatDamageResponse = true   -- Should it respond to damages while it has an active enemy? | true = Hide behind an object if possible otherwise run to a covered position
+
+ENT.CombatFaceEnemy = true  -- If enemy is exists and is visible
+ENT.HasWeaponBackAway = true -- Should the SNPC back away if the enemy is close?
+ENT.HasLostWeaponSightAnimation = true -- Set to true if you would like the SNPC to play a different animation when it has lost sight of the enemy and can't fire at it
+
+-- ====== Constantly Face Enemy ====== --
+ENT.ConstantlyFaceEnemy = false   -- Should it face the enemy constantly?
+ENT.ConstantlyFaceEnemy_IfVisible = true -- Should it only face the enemy if it's visible?
+ENT.ConstantlyFaceEnemy_IfAttacking = true  -- Should it face the enemy when attacking?
+ENT.ConstantlyFaceEnemy_Postures = "Moving" -- "Both" = Moving or standing | "Moving" = Only when moving | "Standing" = Only when standing
+ENT.ConstantlyFaceEnemy_MinDistance = 3000 -- How close does it have to be until it starts to face the enemy?
+ENT.Weapon_UnarmedBehavior = false 
+
+ENT.DamageResponse = true -- Should it respond to damages while it has no enemy?
+
+
 ENT.grunt_NextStumbleT = CurTime() + 3
 ENT.grunt_NextText = CurTime() + 3
 ENT.isVR = false 
@@ -47,6 +66,20 @@ function ENT:CustomOnInitialize()
 	self.GetDamageType = {} --need to gib work
 	self.gib_type = "ok"
 end
+function ENT:TranslateActivity(act)
+	if self.aiai == true then
+		if act == ACT_WALK then
+			return ACT_WALK_HURT 
+		end
+		if act == ACT_RUN then
+			return ACT_RUN_HURT 
+		end
+		if act == ACT_IDLE then
+			return ACT_IDLE_HURT 
+		end
+		return act		
+	end
+end
 function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup) 
 	local dotext = math.random(1,2)
 	if dotext == 2 then
@@ -55,9 +88,18 @@ function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup)
 			madness_combat_snpc_doText(self,table.Random( madness_npc_text ))	
 		end
 	end
+	if self:Health() <= (self:GetMaxHealth() / 2.2) then
+		self.NextAnyAttackTime_Melee = 0.5	 -- How much time until it can use any attack again? | Counted in Seconds
+		self.MeleeAttackDamage = 7
+		self.AnimTbl_MeleeAttack = {"vjges_punch_hunt_01","vjges_punch_hunt_02"} -- Melee Attack Animations
+		self.MeleeAttackAnimationAllowOtherTasks = false  -- If set to true, the animation will not stop other tasks from playing, such as chasing | Useful for gesture attacks!
+		self.aiai = true 
+	end
 	if GetConVar("vj_madness_gore"):GetInt() == 1 then
    		local damageForce = dmginfo:GetDamageForce():Length()
     	self.totalDamage[hitgroup] = (self.totalDamage[hitgroup] or 0) + damageForce
+
+
 		if self.totalDamage[hitgroup] > 4000 then
 			if hitgroup == 13 then
 				self.gib_type = "head_damege"
@@ -77,9 +119,11 @@ function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup)
 			if hitgroup == HITGROUP_LEFTLEG then --Dismember foot code
 				madness_combat_snpc_doText(self,"my LEG")
 				self.gib_type = "l_leg"
+				self.Weapon_UnarmedBehavior = true  
 			elseif hitgroup == HITGROUP_RIGHTLEG then --Dismember foot code
 				madness_combat_snpc_doText(self,"my LEG")
 				self.gib_type = "R_leg"
+				self.Weapon_UnarmedBehavior = true  
 			end
 		end
 		if hitgroup == 13 or hitgroup == 14 or hitgroup == 17 or hitgroup == 16 or hitgroup == 15 and self.totalDamage[hitgroup] > 12000 then
