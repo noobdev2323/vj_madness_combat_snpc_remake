@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "decals/grunt/Blood04"
+	"$translucent" "1"
+	"$decal" 1
+	"$decalscale" 0.1
+}

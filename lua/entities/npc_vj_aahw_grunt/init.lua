@@ -4,19 +4,28 @@ include("shared.lua")
 ENT.Model = {"models/noob_dev2323/madness/npc/grunt_npc.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
 ENT.StartHealth = 20 -- or you can use a convar: GetConVarNumber("vj_dum_dummy_h")
 ENT.VJ_NPC_Class = {"CLASS_AAHW"} -- NPCs with the same class with be allied to each other
-ENT.DeathCorpseSetBoneAngles = true -- This can be used to stop the corpse glitching or flying on death
-ENT.DeathCorpseApplyForce = true  -- If false, force will not be applied to the corpse
 
+ENT.DeathCorpseSetBoneAngles = true  -- This can be used to stop the corpse glitching or flying on death
+ENT.DeathCorpseApplyForce = false   -- If false, force will not be applied to the corpse
+
+ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
+ENT.BloodColor = "Red" -- The blood type, this will determine what it should use (decal, particle, etc.)
+ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
+ENT.HasBloodDecal = true -- Does it spawn a decal when damaged?
+ENT.HasBloodPool = false -- Does it have a blood pool?
+ENT.BloodPoolSize = "Tiny" -- What's the size of the blood pool?
+ENT.CustomBlood_Decal = {"VJ_AAWH_GRUNT_BLOOD"} -- Decals to spawn when it's damaged
 
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
 ENT.MeleeAttackDamageType = DMG_CLUB
-ENT.AnimTbl_MeleeAttack = {"vjges_punch01","vjges_punch02"} -- Melee Attack Animations
-ENT.MeleeAttackAnimationAllowOtherTasks = true -- If set to true, the animation will not stop other tasks from playing, such as chasing | Useful for gesture attacks!
+ENT.AnimTbl_MeleeAttack = false  -- Melee Attack Animations
+ENT.MeleeAttackAnimationAllowOtherTasks = true  -- If set to true, the animation will not stop other tasks from playing, such as chasing | Useful for gesture attacks!
 ENT.MeleeAttackDistance = 55 -- How close does it have to be until it attacks?
-ENT.MeleeAttackDamageDistance = 120 -- How far does the damage go?
+ENT.MeleeAttackDamageDistance = 140 -- How far does the damage go?
 ENT.TimeUntilMeleeAttackDamage = 0.5 -- This counted in seconds | This calculates the time until it hits something
-ENT.NextAnyAttackTime_Melee = 0	 -- How much time until it can use any attack again? | Counted in Seconds
+ENT.NextAnyAttackTime_Melee = 1	 -- How much time until it can use any attack again? | Counted in Seconds
 ENT.MeleeAttackDamage = 10
+
 
 ENT.AnimTbl_Flinch = {"vjges_flinch"} -- If it uses normal based animation, use this
 ENT.CanFlinch = 1 -- 0 = Don't flinch | 1 = Flinch at any damage | 2 = Flinch only from certain damages
@@ -26,14 +35,13 @@ ENT.NextMoveAfterFlinchTime = false -- How much time until it can move, attack, 
 ENT.NextFlinchTime = 0.5 -- How much time until it can flinch again?
 ENT.FlinchAnimationDecreaseLengthAmount = 0 -- This will decrease the time it can move, attack, etc. | Use it to fix animation pauses after it finished the flinch animation
 ENT.HitGroupFlinching_DefaultWhenNotHit = true -- If it uses hitgroup flinching, should it do the regular flinch if it doesn't hit any of the specified hitgroups?
-ENT.MeleeAttackStopOnHit = true  -- Should it stop executing the melee attack after it hits an enemy?
+ENT.MeleeAttackStopOnHit = false   -- Should it stop executing the melee attack after it hits an enemy?
 ENT.HasSounds = true -- Put to false to disable ALL sound
 ENT.SoundTbl_MeleeAttack = {"noob_dev2323/madness/melee/Punch1.wav","noob_dev2323/madness/melee/Punch2.wav","noob_dev2323/madness/melee/Punch3.wav","noob_dev2323/madness/melee/Punch4.wav","noob_dev2323/madness/melee/Punch5.wav"}
 ENT.SoundTbl_BeforeMeleeAttack = {"noob_dev2323/madness/grunt/Grunt.wav","noob_dev2323/madness/grunt/Grunt-1.wav","noob_dev2323/madness/grunt/Grunt-2.wav","noob_dev2323/madness/grunt/Grunt-3.wav","noob_dev2323/madness/grunt/Grunt-4.wav","noob_dev2323/madness/grunt/Grunt-5.wav","noob_dev2323/madness/grunt/Grunt-6.wav","noob_dev2323/madness/grunt/Grunt-7.wav","noob_dev2323/madness/grunt/Grunt-8.wav"}
 
 ENT.Weapon_NoSpawnMenu = true -- If set to true, the NPC weapon setting in the spawnmenu will not be applied for this SNPC
 ENT.HasWeaponBackAway = true  -- Should the SNPC back away if the enemy is close?
-ENT.ConstantlyFaceEnemy_IfVisible = false   -- Should it only face the enemy if it's visible?
 ENT.PropInteraction = false  -- Controls how it should interact with props
 ENT.CallForHelp = true -- Does the SNPC call for help?
 
@@ -44,16 +52,19 @@ ENT.HasWeaponBackAway = true -- Should the SNPC back away if the enemy is close?
 ENT.HasLostWeaponSightAnimation = true -- Set to true if you would like the SNPC to play a different animation when it has lost sight of the enemy and can't fire at it
 
 -- ====== Constantly Face Enemy ====== --
-ENT.ConstantlyFaceEnemy = false   -- Should it face the enemy constantly?
+ENT.ConstantlyFaceEnemy = true    -- Should it face the enemy constantly?
 ENT.ConstantlyFaceEnemy_IfVisible = true -- Should it only face the enemy if it's visible?
 ENT.ConstantlyFaceEnemy_IfAttacking = true  -- Should it face the enemy when attacking?
 ENT.ConstantlyFaceEnemy_Postures = "Moving" -- "Both" = Moving or standing | "Moving" = Only when moving | "Standing" = Only when standing
 ENT.ConstantlyFaceEnemy_MinDistance = 3000 -- How close does it have to be until it starts to face the enemy?
 ENT.Weapon_UnarmedBehavior = false 
 
+ENT.HasPoseParameterLooking = true -- Does it look at its enemy using poseparameters?
+
 ENT.DamageResponse = true -- Should it respond to damages while it has no enemy?
-
-
+ENT.Weapon_Disabled = true  -- Disable the ability for it to use weapons
+ENT.Weapon_IgnoreSpawnMenu = true -- Should it ignore weapon overrides from the spawn menu?
+ENT.DropDeathLoot = false -- Should it drop loot on death?
 ENT.grunt_NextStumbleT = CurTime() + 3
 ENT.grunt_NextText = CurTime() + 3
 ENT.isVR = false 
@@ -77,6 +88,9 @@ function ENT:TranslateActivity(act)
 		if act == ACT_IDLE then
 			return ACT_IDLE_HURT 
 		end
+		if act == ACT_IDLE then
+			return ACT_REF 
+		end
 		return act		
 	end
 end
@@ -92,7 +106,6 @@ function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup)
 		self.NextAnyAttackTime_Melee = 0.5	 -- How much time until it can use any attack again? | Counted in Seconds
 		self.MeleeAttackDamage = 7
 		self.AnimTbl_MeleeAttack = {"vjges_punch_hunt_01","vjges_punch_hunt_02"} -- Melee Attack Animations
-		self.MeleeAttackAnimationAllowOtherTasks = false  -- If set to true, the animation will not stop other tasks from playing, such as chasing | Useful for gesture attacks!
 		self.aiai = true 
 	end
 	if GetConVar("vj_madness_gore"):GetInt() == 1 then
@@ -271,5 +284,8 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo, hitgroup)
 			end
 		end )
 	end
+end
+function ENT:OnMeleeAttackExecute(status, ent, isProp) 
+	self:VJ_ACT_PLAYACTIVITY("vjges_true",false,1,true  )
 end
 -- All functions and variables are located inside the base files. It can be found in the GitHub Repository: https://github.com/DrVrej/VJ-Base

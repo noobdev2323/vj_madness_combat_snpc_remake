@@ -1,6 +1,6 @@
-ENT.Base 		= "npc_vj_human_base"
+ENT.Base 		= "npc_vj_aahw_grunt"
 ENT.Type 		= "ai"
-ENT.PrintName 		= "grunt"
+ENT.PrintName 		= "grunt melee"
 ENT.Author 		= "noob_dev2323"
 ENT.Contact 		= "http://steamcommunity.com/groups/vrejgaming"
 ENT.Category		= "madness combat remake"
