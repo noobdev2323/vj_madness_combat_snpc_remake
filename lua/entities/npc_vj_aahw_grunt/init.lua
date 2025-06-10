@@ -17,14 +17,16 @@ ENT.BloodPoolSize = "Tiny" -- What's the size of the blood pool?
 ENT.CustomBlood_Decal = {"VJ_AAWH_GRUNT_BLOOD"} -- Decals to spawn when it's damaged
 
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
+ENT.AnimTbl_MeleeAttack = {"vjges_punch01","vjges_punch02"} -- Melee Attack Animations
 ENT.MeleeAttackDamageType = DMG_CLUB
-ENT.AnimTbl_MeleeAttack = false  -- Melee Attack Animations
-ENT.MeleeAttackAnimationAllowOtherTasks = true  -- If set to true, the animation will not stop other tasks from playing, such as chasing | Useful for gesture attacks!
+ENT.AnimTbl_MeleeAttack = true   -- Melee Attack Animations
+ENT.MeleeAttackAnimationAllowOtherTasks = true    -- If set to true, the animation will not stop other tasks from playing, such as chasing | Useful for gesture attacks!
 ENT.MeleeAttackDistance = 55 -- How close does it have to be until it attacks?
 ENT.MeleeAttackDamageDistance = 140 -- How far does the damage go?
-ENT.TimeUntilMeleeAttackDamage = 0.5 -- This counted in seconds | This calculates the time until it hits something
+ENT.TimeUntilMeleeAttackDamage = 1 -- This counted in seconds | This calculates the time until it hits something
 ENT.NextAnyAttackTime_Melee = 1	 -- How much time until it can use any attack again? | Counted in Seconds
 ENT.MeleeAttackDamage = 10
+ENT.MeleeAttackStopOnHit = false   -- Should it stop executing the melee attack after it hits an enemy? sa
 
 
 ENT.AnimTbl_Flinch = {"vjges_flinch"} -- If it uses normal based animation, use this
@@ -35,7 +37,6 @@ ENT.NextMoveAfterFlinchTime = false -- How much time until it can move, attack, 
 ENT.NextFlinchTime = 0.5 -- How much time until it can flinch again?
 ENT.FlinchAnimationDecreaseLengthAmount = 0 -- This will decrease the time it can move, attack, etc. | Use it to fix animation pauses after it finished the flinch animation
 ENT.HitGroupFlinching_DefaultWhenNotHit = true -- If it uses hitgroup flinching, should it do the regular flinch if it doesn't hit any of the specified hitgroups?
-ENT.MeleeAttackStopOnHit = false   -- Should it stop executing the melee attack after it hits an enemy?
 ENT.HasSounds = true -- Put to false to disable ALL sound
 ENT.SoundTbl_MeleeAttack = {"noob_dev2323/madness/melee/Punch1.wav","noob_dev2323/madness/melee/Punch2.wav","noob_dev2323/madness/melee/Punch3.wav","noob_dev2323/madness/melee/Punch4.wav","noob_dev2323/madness/melee/Punch5.wav"}
 ENT.SoundTbl_BeforeMeleeAttack = {"noob_dev2323/madness/grunt/Grunt.wav","noob_dev2323/madness/grunt/Grunt-1.wav","noob_dev2323/madness/grunt/Grunt-2.wav","noob_dev2323/madness/grunt/Grunt-3.wav","noob_dev2323/madness/grunt/Grunt-4.wav","noob_dev2323/madness/grunt/Grunt-5.wav","noob_dev2323/madness/grunt/Grunt-6.wav","noob_dev2323/madness/grunt/Grunt-7.wav","noob_dev2323/madness/grunt/Grunt-8.wav"}
@@ -49,7 +50,7 @@ ENT.CombatDamageResponse = true   -- Should it respond to damages while it has a
 
 ENT.CombatFaceEnemy = true  -- If enemy is exists and is visible
 ENT.HasWeaponBackAway = true -- Should the SNPC back away if the enemy is close?
-ENT.HasLostWeaponSightAnimation = true -- Set to true if you would like the SNPC to play a different animation when it has lost sight of the enemy and can't fire at it
+ENT.HasLostWeaponSightAnimation = false -- Set to true if you would like the SNPC to play a different animation when it has lost sight of the enemy and can't fire at it
 
 -- ====== Constantly Face Enemy ====== --
 ENT.ConstantlyFaceEnemy = true    -- Should it face the enemy constantly?
@@ -164,6 +165,7 @@ function ENT:SetUpGibesOnDeath(dmginfo,hitgroup)
 end
 
 function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
+
 	if self.isVR == true then
 		corpseEnt:Fire("FadeAndRemove","",0.1)
 		for i = 0, corpseEnt:GetPhysicsObjectCount() - 1 do
@@ -284,8 +286,5 @@ function ENT:CustomOnTakeDamage_AfterDamage(dmginfo, hitgroup)
 			end
 		end )
 	end
-end
-function ENT:OnMeleeAttackExecute(status, ent, isProp) 
-	self:VJ_ACT_PLAYACTIVITY("vjges_true",false,1,true  )
 end
 -- All functions and variables are located inside the base files. It can be found in the GitHub Repository: https://github.com/DrVrej/VJ-Base
