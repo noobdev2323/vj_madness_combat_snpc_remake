@@ -79,7 +79,7 @@ function ENT:CustomOnInitialize()
 	self.gib_type = "ok"
 end
 function ENT:TranslateActivity(act)
-	if self.aiai == true then
+	if self.aiai == true and not self.melee == true then
 		if act == ACT_WALK then
 			return ACT_WALK_HURT 
 		end
