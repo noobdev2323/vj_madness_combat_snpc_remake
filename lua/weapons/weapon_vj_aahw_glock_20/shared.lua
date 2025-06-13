@@ -44,7 +44,7 @@ SWEP.PrimaryEffects_MuzzleAttachment = "muzzle"
 SWEP.PrimaryEffects_ShellAttachment = "1"
 SWEP.PrimaryEffects_ShellType = "VJ_Weapon_PistolShell1"
 function SWEP:CustomOnInitialize()
-if self.Owner:IsPlayer() then
-self.WorldModel					= "models/madness/weapons/w_glock_20_for_player.mdl"
+    if self.Owner:IsPlayer() then
+        self.WorldModel	= "models/madness/weapons/w_glock_20_for_player.mdl"
+    end
 end
- end
