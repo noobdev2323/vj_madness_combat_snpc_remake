@@ -7,7 +7,7 @@ VJ.AddPlugin("madness combat remake", "NPC")
 
 local spawnCategory = "madness combat remake" -- Category, you can also set a category individually by replacing the spawnCategory with a string value
 VJ.AddNPC("aahw grunt", "npc_vj_aahw_grunt", spawnCategory) -- Adds a NPC to the spawnmenu
-VJ.AddNPC_HUMAN("aahw agent", "npc_vj_aahw_agent",{"weapon_vj_madness_glock_20"}, spawnCategory) -- Adds a NPC to the spawnmenu
+VJ.AddNPC_HUMAN("aahw agent", "npc_vj_aahw_agent",{"weapon_vj_aahw_glock_20"}, spawnCategory) -- Adds a NPC to the spawnmenu
 VJ.AddNPC("aahw grunt melee", "npc_vj_aahw_grunt_melee", spawnCategory) -- Adds a NPC to the spawnmenu
 VJ.AddNPC("aahw vr training buddy", "npc_vj_aahw_vr_training_buddy", spawnCategory) -- Adds a NPC to the spawnmenu
 
