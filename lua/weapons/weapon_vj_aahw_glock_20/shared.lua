@@ -26,9 +26,9 @@ SWEP.Reload_TimeUntilFinished	= 2 -- How much time until the player can play idl
 SWEP.Spawnable					= true
 SWEP.AdminSpawnable				= false
 -- NPC Settings ---------------------------------------------------------------------------------------------------------------------------------------------
-SWEP.NPC_NextPrimaryFire = 1 -- Next time it can use primary fire
-SWEP.NPC_TimeUntilFire = 1 -- How much time until the bullet/projectile is fired?
-SWEP.NPC_CustomSpread = 2
+SWEP.NPC_NextPrimaryFire = 0.3 -- Next time it can use primary fire
+SWEP.NPC_TimeUntilFire = 0.5 -- How much time until the bullet/projectile is fired?
+SWEP.NPC_CustomSpread = 1
 SWEP.NPC_HasSecondaryFire = false -- Can the weapon have a secondary fire?
 -- Primary Fire ---------------------------------------------------------------------------------------------------------------------------------------------
 SWEP.Primary.Damage = 10 -- Damage

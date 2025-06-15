@@ -1,0 +1,18 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/noob_dev2323/madness_combat/grunt/body_agent"
+	"$lightwarptexture" "models/noob_dev2323/madness_combat/shaders/blshade"
+
+	"$model" 1
+	"$phong" "1"
+	"$phongexponent" "1"
+	"$phongboost" ".7"	
+	"$phongfresnelranges"	"[.1 1 4]"
+	"$halflambert" "0"
+
+
+	"$rimlight" "1"											
+	"$rimlightexponent" "1"										
+	"$rimlightboost" "1.5"	
+}
+

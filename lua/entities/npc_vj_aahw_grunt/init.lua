@@ -46,17 +46,15 @@ ENT.SoundTbl_BeforeMeleeAttack = {"noob_dev2323/madness/grunt/Grunt.wav","noob_d
 
 ENT.DamageResponse = true -- Should it respond to damages while it has no enemy?
 ENT.Weapon_Disabled = true  -- Disable the ability for it to use weapons
-ENT.Weapon_IgnoreSpawnMenu = true -- Should it ignore weapon overrides from the spawn menu?
 ENT.DropDeathLoot = false -- Should it drop loot on death?
 ENT.grunt_NextStumbleT = CurTime() + 3
 ENT.grunt_NextText = CurTime() + 3
 ENT.isVR = false 
 ENT.Weapon_UnarmedBehavior = false   
 ENT.Weapon_CanCrouchAttack = false  -- Can it crouch while firing a weapon?
-ENT.AnimTbl_WeaponAttack = true    -- Animations to play while firing a weapon
 ENT.AnimTbl_WeaponAttackCrouch = false  -- Animations to play while firing a weapon in crouched position
 ENT.AnimTbl_WeaponAttack = ACT_RANGE_ATTACK1 -- Animations to play while firing a weapon
-ENT.AnimTbl_WeaponAttackGesture = ACT_GESTURE_RANGE_ATTACK1 -- Gesture animations to play while firing a weapon | false = Don't play an animation
+ENT.AnimTbl_WeaponAttackGesture = false  -- Gesture animations to play while firing a weapon | false = Don't play an animation
 ENT.grunt_status = {
 	life = 30
 }
@@ -199,7 +197,6 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 		local bone = corpseEnt:TranslateBoneToPhysBone(head_bone)
 		local colide = corpseEnt:GetPhysicsObjectNum( bone )
 		colide:AddVelocity(dmginfo:GetDamageForce())
-		corpseEnt:SetSkin(1)
 	end
 	if self.gib_type == "half" then
 		if self.HasGibDeathParticles == true then

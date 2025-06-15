@@ -120,7 +120,6 @@ function madness_gib_head(target)
 	madness_physbone_colide(target,"head")
 	local head_bone = target:LookupBone( "head" )
 	target:ManipulateBoneScale(head_bone,Vector(0,0,0))
-	target:SetSkin(1)
 end
 function madness_physbone_colide(target,bone,disable_motion)
 	local colide = target:GetPhysicsObjectNum(target:TranslateBoneToPhysBone(target:LookupBone(bone))) --get bone id

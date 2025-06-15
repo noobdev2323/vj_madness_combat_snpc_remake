@@ -16,6 +16,7 @@ function ENT:CustomOnInitialize()
 	self.GetDamageType = {} --need to gib work
 	self.gib_type = "ok"
 	self:SetBodygroup(2, 1)
+	self:SetSkin(1)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- All functions and variables are located inside the base files. It can be found in the GitHub Repository: https://github.com/DrVrej/VJ-Base
