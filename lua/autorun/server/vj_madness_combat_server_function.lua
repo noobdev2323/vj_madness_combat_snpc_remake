@@ -67,20 +67,22 @@ hook.Add("EntityTakeDamage", "EntityMadness_ent_TakeDamage", function(target, dm
 				if doDamege == true  then 
 					target.ragdoll_Health = target.ragdoll_Health - dmginfo:GetDamage()		
 				end
-				if target.ragdoll_Health <= 0 then 
+				if target.ragdoll_Health <= 0 and not target.fucked then 
+					target.fucked = true 
+					local dmg_force = dmginfo:GetDamageForce()
 					timer.Simple( 0.05, function()
-						if IsValid(target) then
-							madness_ragdoll_gib(target,dmginfo:GetDamageForce())
-						end
+						madness_ragdoll_gib(target,dmg_force)
 					end )
 				end
 			end
 		end 
 	end
 end)
-function madness_ragdoll_gib(target,dmgForce)
-	madness_make_vj_gibs("models/Gibs/HGIBS.mdl",target:GetAttachment(target:LookupAttachment("2")).Pos,dmgForce)
+function madness_ragdoll_gib(target,dmg_force)
+	if IsValid(target) then
+	madness_make_vj_gibs("models/Gibs/HGIBS.mdl",target:GetAttachment(target:LookupAttachment("2")).Pos,dmg_force)
 	target:Remove()
+	end
 end
 
 function madness_GetClosestPhysBone(ent,dmginfo)
@@ -140,23 +142,20 @@ function bonemerge_prop_on_npc(model,ent)
 	ent.bonemerge_prop:SetSolid(SOLID_NONE)
 	ent.bonemerge_prop:AddEffects(EF_BONEMERGE)
 end
-function madness_make_vj_gibs(model,pos,dmgForce)
+function madness_make_vj_gibs(model,pos,dmg_force)
 	local gib = ents.Create("obj_vj_gib")
 	gib:SetModel(model)
 	gib:SetPos(pos)
 	gib:SetAngles(Angle(math.Rand(-180, 180), math.Rand(-180, 180), math.Rand(-180, 180)))
-	gib.BloodType = target.HLR_Corpse_Type
-	gib.Collide_Decal = HLR_Corpse_Decal
-	gib.CollideSound = "Default"
 	gib:Spawn()
 	gib:Activate()
 	local phys = gib:GetPhysicsObject()
 	if IsValid(phys) then
-		phys:AddVelocity(Vector(math.Rand(-100, 100), math.Rand(-100, 100), math.Rand(150, 250)) + (dmgForce / 70))
+		phys:AddVelocity(Vector(math.Rand(-100, 100), math.Rand(-100, 100), math.Rand(150, 250)) + (dmg_force / 70))
 		phys:AddAngleVelocity(Vector(math.Rand(-200, 200), math.Rand(-200, 200), math.Rand(-200, 200)))
 	end
-	if GetConVar("vj_npc_fadegibs"):GetInt() == 1 then
-		timer.Simple(GetConVar("vj_npc_fadegibstime"):GetInt(), function()
+	if GetConVar("vj_npc_gib_fade"):GetInt() == 1 then
+		timer.Simple(GetConVar("vj_npc_gib_fadetime"):GetInt(), function()
 			SafeRemoveEntity(gib)
 		end)
 	end
