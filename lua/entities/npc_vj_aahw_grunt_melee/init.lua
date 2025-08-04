@@ -42,6 +42,7 @@ function ENT:CustomOnInitialize()
 		self.AnimTbl_MeleeAttack = {"vjges_melee_attack_01"}
 		self.SoundTbl_MeleeAttack = {"noob_dev2323/madness/melee/Hit_1.wav","noob_dev2323/madness/melee/Hit_2.wav","noob_dev2323/madness/melee/Hit_3.wav"}
 	end
+	print(melee)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- All functions and variables are located inside the base files. It can be found in the GitHub Repository: https://github.com/DrVrej/VJ-Base

@@ -51,7 +51,8 @@ hook.Add("EntityTakeDamage", "EntityMadness_ent_TakeDamage", function(target, dm
 
 			if target.madness_boneHealth["head"] <= 0 && !target.Head_gibbed then 
 				target.Head_gibbed = true 
-				madness_gib_head(target)
+				local dmg_force = dmginfo:GetDamageForce()
+				madness_gib_head(target,dmg_force)
 			end
 			if target.madness_boneHealth["R_foot"] <= 0 && !target.R_foot then 
 				target.R_foot = true 
@@ -80,8 +81,20 @@ hook.Add("EntityTakeDamage", "EntityMadness_ent_TakeDamage", function(target, dm
 end)
 function madness_ragdoll_gib(target,dmg_force)
 	if IsValid(target) then
-	madness_make_vj_gibs("models/Gibs/HGIBS.mdl",target:GetAttachment(target:LookupAttachment("2")).Pos,dmg_force)
-	target:Remove()
+		if !target.Head_gibbed then
+			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk2.mdl",target:GetAttachment(target:LookupAttachment("2")).Pos,dmg_force)
+			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk1.mdl",target:GetAttachment(target:LookupAttachment("5")).Pos,dmg_force)
+			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk3.mdl",target:GetAttachment(target:LookupAttachment("head")).Pos,dmg_force)
+			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk5.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force)
+			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk6.mdl",target:GetAttachment(target:LookupAttachment("4")).Pos,dmg_force)
+			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk4.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force)			
+		end
+		local bloodeffect = EffectData()
+		bloodeffect:SetOrigin(target:GetPos() +target:OBBCenter())
+		bloodeffect:SetColor(VJ_Color2Byte(Color(130,19,10)))
+		bloodeffect:SetScale(50)
+		util.Effect("VJ_Blood1",bloodeffect)
+		target:Remove()
 	end
 end
 
@@ -115,7 +128,7 @@ function madness_GetClosestPhysBone(ent,dmginfo)
 		end
 	end
 end
-function madness_gib_head(target)
+function madness_gib_head(target,dmg_force)
 	local bloodeffect = EffectData()
 	bloodeffect:SetOrigin(target:GetAttachment(target:LookupAttachment("head_gib")).Pos)
 	bloodeffect:SetColor(VJ_Color2Byte(Color(130,19,10)))
@@ -125,6 +138,12 @@ function madness_gib_head(target)
 	madness_physbone_colide(target,"head")
 	local head_bone = target:LookupBone( "head" )
 	target:ManipulateBoneScale(head_bone,Vector(0,0,0))
+	madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk2.mdl",target:GetAttachment(target:LookupAttachment("2")).Pos,dmg_force)
+	madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk1.mdl",target:GetAttachment(target:LookupAttachment("5")).Pos,dmg_force)
+	madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk3.mdl",target:GetAttachment(target:LookupAttachment("head")).Pos,dmg_force)
+	madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk5.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force)
+	madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk6.mdl",target:GetAttachment(target:LookupAttachment("4")).Pos,dmg_force)
+	madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk4.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force)
 end
 function madness_physbone_colide(target,bone,disable_motion)
 	local colide = target:GetPhysicsObjectNum(target:TranslateBoneToPhysBone(target:LookupBone(bone))) --get bone id
@@ -149,9 +168,11 @@ function madness_make_vj_gibs(model,pos,dmg_force)
 	gib:SetAngles(Angle(math.Rand(-180, 180), math.Rand(-180, 180), math.Rand(-180, 180)))
 	gib:Spawn()
 	gib:Activate()
+	gib.BloodType = VJ.BLOOD_COLOR_RED
+	gib.CollisionDecal = {"VJ_AAWH_GRUNT_BLOOD"}
 	local phys = gib:GetPhysicsObject()
 	if IsValid(phys) then
-		phys:AddVelocity(Vector(math.Rand(-100, 100), math.Rand(-100, 100), math.Rand(150, 250)) + (dmg_force / 70))
+		phys:AddVelocity(Vector(math.Rand(-100, 100), math.Rand(-100, 100), math.Rand(150, 250)) + (dmg_force / 20))
 		phys:AddAngleVelocity(Vector(math.Rand(-200, 200), math.Rand(-200, 200), math.Rand(-200, 200)))
 	end
 	if GetConVar("vj_npc_gib_fade"):GetInt() == 1 then

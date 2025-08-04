@@ -10,9 +10,8 @@ ENT.StartHealth = 30
 ENT.Bleeds = true -- Does the SNPC bleed? (Blood decal, particle, etc.)
 ENT.BloodColor = "Green" -- The blood type, this will determine what it should use (decal, particle, etc.)
 ENT.HasBloodParticle = true -- Does it spawn a particle when damaged?
-ENT.HasBloodDecal = true -- Does it spawn a decal when damaged?
+ENT.HasBloodDecal = false  -- Does it spawn a decal when damaged?
 ENT.HasBloodPool = false -- Does it have a blood pool?
-
 
 ENT.VJ_NPC_Class = {"CLASS_AAHW"} -- NPCs with the same class with be allied to each other
 

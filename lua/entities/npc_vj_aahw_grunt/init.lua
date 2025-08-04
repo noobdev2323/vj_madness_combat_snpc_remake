@@ -5,6 +5,13 @@ ENT.Model = {"models/noob_dev2323/madness/npc/grunt_npc.mdl"} -- The game will p
 ENT.StartHealth = 20 -- or you can use a convar: GetConVarNumber("vj_dum_dummy_h")
 ENT.VJ_NPC_Class = {"CLASS_AAHW"} -- NPCs with the same class with be allied to each other
 
+ENT.Bleeds = true -- Can it bleed? Controls all bleeding related components such blood decal, particle, pool, etc.
+ENT.BloodColor = "red" -- Its blood type, this will determine the blood decal, particle, etc.
+ENT.HasBloodDecal = true -- Should it spawn a decal when damaged?
+ENT.BloodColor = VJ.BLOOD_COLOR_RED
+ENT.BloodDecal = {"VJ_AAWH_GRUNT_BLOOD"}
+ENT.HasBloodPool = false  -- Should a blood pool spawn by its corpse?
+
 ENT.ControllerParams = {
 	CameraMode = 1, -- Sets the default camera mode | 1 = Third Person, 2 = First Person
 	ThirdP_Offset = Vector(0, 0, 0), -- The offset for the controller when the camera is in third person
@@ -31,7 +38,6 @@ ENT.MeleeAttackDamage = 10
 
 ENT.AnimTbl_Flinch = {"vjges_flinch"} -- If it uses normal based animation, use this
 ENT.CanFlinch = 1 -- 0 = Don't flinch | 1 = Flinch at any damage | 2 = Flinch only from certain damages
-ENT.FlinchDamageTypes = {DMG_BLAST} -- If it uses damage-based flinching, which types of damages should it flinch from?
 ENT.FlinchChance = 1 -- Chance of it flinching from 1 to x | 1 will make it always flinch
 	-- To let the base automatically detect the animation duration, set this to false:
 ENT.NextMoveAfterFlinchTime = false -- How much time until it can move, attack, etc.
@@ -55,6 +61,7 @@ ENT.Weapon_CanCrouchAttack = false  -- Can it crouch while firing a weapon?
 ENT.AnimTbl_WeaponAttackCrouch = false  -- Animations to play while firing a weapon in crouched position
 ENT.AnimTbl_WeaponAttack = ACT_RANGE_ATTACK1 -- Animations to play while firing a weapon
 ENT.AnimTbl_WeaponAttackGesture = false  -- Gesture animations to play while firing a weapon | false = Don't play an animation
+ENT.is_madness_combat_npc = true 
 ENT.grunt_status = {
 	life = 30
 }
@@ -63,7 +70,6 @@ function ENT:CustomOnInitialize()
 	self.totalDamage = {}
 	self.GetDamageType = {} --need to gib work
 	self.gib_type = "ok"
-	self.is_madness_combat_npc = true 
 end
 
 function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup) 
@@ -122,6 +128,7 @@ function ENT:SetUpGibesOnDeath(dmginfo,hitgroup)
 end
 
 function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
+	corpseEnt.HLR_Corpse_Decal = self.HasBloodDecal and VJ_PICK(self.CustomBlood_Decal) or ""
 
 	if self.isVR == true then
 		corpseEnt:Fire("FadeAndRemove","",0.1)
@@ -166,6 +173,7 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 			bloodeffect:Fire("Start","",0)
 			bloodeffect:Fire("Kill","",7) 
 		end
+		corpseEnt.Head_gibbed = true 
 		if self.isVR == false then
 			local Vel = self:GetRight()*math.Rand(-1000,1000)+self:GetForward()*math.Rand(-1000,10) 
 			self:CreateGibEntity("obj_vj_gib","models/noob_dev2323/madness/gibs/head_chunk2.mdl",{CollisionDecal="VJ_AAWH_GRUNT_BLOOD",Pos=self:GetAttachment(self:LookupAttachment("2")).Pos,Ang=self:GetAngles(),Vel=vel})
@@ -199,7 +207,7 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 		if bone_name == "head" then
 
 			local distance = corpseEnt:GetBonePosition(corpseEnt:LookupBone("head")):Distance(dmginfo:GetDamagePosition())
-			if distance > 20 then
+			if distance > 17 then
 				corpseEnt:SetBodygroup(1, 6)
 				if self.isVR == false then
 					ParticleEffect("blood_impact_red_01_goop",self:GetAttachment(self:LookupAttachment("head_gib")).Pos,self:GetAngles())
@@ -217,7 +225,7 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 			end
 		end
 		if bone_name == "torax" then
-			if self.HasGibDeathParticles == true then
+			if self.HasGibDeathParticles == true and not self.isVR == true then
 				local bloodeffect = EffectData()
 				bloodeffect:SetOrigin(self:GetPos() +self:OBBCenter())
 				bloodeffect:SetColor(VJ_Color2Byte(Color(130,19,10)))
