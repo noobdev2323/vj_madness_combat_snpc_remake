@@ -21,13 +21,13 @@ function ENT:CustomOnInitialize()
 		bonemerge_prop_on_npc("models/noob_dev2323/madness/weapons/w_bowieKnife.mdl",self)
 		self.MeleeAttackDamage = 35
 		self.MeleeAttackDamageType = DMG_SLASH
-		self.AnimTbl_MeleeAttack = {"vjges_stab","vjges_melee_attack_01"}
+		self.AnimTbl_MeleeAttack = {"vjges_stab","vjges_melee_attack_01","vjges_melee_attack_02"}
 		self.SoundTbl_MeleeAttack = {"noob_dev2323/madness/melee/slash_01.wav","noob_dev2323/madness/melee/slash_02.wav","noob_dev2323/madness/melee/slash_03.wav","noob_dev2323/madness/melee/slash_04.wav"}
 	elseif melee == 2 then
 		bonemerge_prop_on_npc("models/noob_dev2323/madness/weapons/w_iron_knife.mdl",self)
 		self.MeleeAttackDamage = 35
 		self.MeleeAttackDamageType = DMG_SLASH
-		self.AnimTbl_MeleeAttack = {"vjges_stab","vjges_melee_attack_01"}
+		self.AnimTbl_MeleeAttack = {"vjges_stab","vjges_melee_attack_01","vjges_melee_attack_02"}
 		self.SoundTbl_MeleeAttack = {"noob_dev2323/madness/melee/slash_01.wav","noob_dev2323/madness/melee/slash_02.wav","noob_dev2323/madness/melee/slash_03.wav","noob_dev2323/madness/melee/slash_04.wav"}
 	elseif melee == 3 then
 		bonemerge_prop_on_npc("models/noob_dev2323/madness/weapons/w_bat.mdl",self)

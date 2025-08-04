@@ -63,6 +63,7 @@ function ENT:CustomOnInitialize()
 	self.totalDamage = {}
 	self.GetDamageType = {} --need to gib work
 	self.gib_type = "ok"
+	self.is_madness_combat_npc = true 
 end
 
 function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup) 
@@ -83,7 +84,7 @@ function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup)
     	self.totalDamage[hitgroup] = (self.totalDamage[hitgroup] or 0) + damageForce
 
 
-		if self.totalDamage[hitgroup] > 4000 then
+		if self.totalDamage[hitgroup] > 4000 and dmginfo:GetDamageType() ~= 4 then
 			if hitgroup == 13 then
 				self.gib_type = "head_damege"
 				self.head_damege_type = 3 
@@ -105,23 +106,6 @@ function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup)
 			elseif hitgroup == HITGROUP_RIGHTLEG then --Dismember foot code
 				madness_combat_snpc_doText(self,"my LEG")
 				self.gib_type = "R_leg"
-			end
-		end
-		if hitgroup == 13 or hitgroup == 14 or hitgroup == 17 or hitgroup == 16 or hitgroup == 15 and self.totalDamage[hitgroup] > 12000 then
-			if dmginfo:IsDamageType(DMG_SLASH) then
-				local slice = math.random(1,2)
-				if slice == 2 then
-					self.gib_type = "decapted"
-				elseif slice == 1 then 
-					self.gib_type = "head_slash"
-				end
-			elseif self.totalDamage[hitgroup] > 12000 then
-				self.gib_type = "head_less"
-			end
-        end
-		if hitgroup == 2 or hitgroup == 3 then --Dismember foot code
-			if dmginfo:IsDamageType(DMG_SLASH) and self.totalDamage[hitgroup] > 12000 then
-				self.gib_type = "half"
 			end
 		end
 	end
@@ -189,40 +173,6 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 		corpseEnt:SetBodygroup(1, 1)
 		sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
 	end
-	if self.gib_type == "decapted" then
-		sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
-		local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("head"))
-		corpseEnt:RemoveInternalConstraint(bone)
-		local head_bone = corpseEnt:LookupBone("head")
-		local bone = corpseEnt:TranslateBoneToPhysBone(head_bone)
-		local colide = corpseEnt:GetPhysicsObjectNum( bone )
-		colide:AddVelocity(dmginfo:GetDamageForce())
-	end
-	if self.gib_type == "half" then
-		if self.HasGibDeathParticles == true then
-			local bloodeffect = EffectData()
-			bloodeffect:SetOrigin(self:GetPos() +self:OBBCenter())
-			bloodeffect:SetColor(VJ_Color2Byte(Color(130,19,10)))
-			bloodeffect:SetScale(50)
-			util.Effect("VJ_Blood1",bloodeffect)
-		end
-		sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
-		local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("torax"))
-		corpseEnt:RemoveInternalConstraint(bone)
-		local head_bone = corpseEnt:LookupBone("torax")
-		local bone = corpseEnt:TranslateBoneToPhysBone(head_bone)
-		local colide = corpseEnt:GetPhysicsObjectNum( bone )
-		colide:AddVelocity(Vector(0,0,999))
-		corpseEnt:SetBodygroup(0, 1)
-	end
-	if self.gib_type == "head_slash" then
-		corpseEnt:SetBodygroup(1, 6)
-		if self.isVR == false then
-			ParticleEffect("blood_impact_red_01_goop",self:GetAttachment(self:LookupAttachment("head_gib")).Pos,self:GetAngles())
-			self:CreateGibEntity("prop_physics","models/noob_dev2323/madness/gibs/half_head.mdl",{Pos=corpseEnt:LocalToWorld(Vector(0,0,54)),Ang=corpseEnt:GetAngles()+Angle(0,0,0),Vel=corpseEnt:GetRight()*math.Rand(-350,350)+self:GetForward()*math.Rand(-200,-300)})	
-			sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
-		end
-	end
 
 	if self.gib_type == "head_damege" then
 		corpseEnt:SetBodygroup(1,self.head_damege_type)
@@ -230,6 +180,52 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 		if self.isVR == false then
 			ParticleEffect("blood_impact_red_01_goop",self:GetAttachment(self:LookupAttachment(att)).Pos,self:GetAngles())
 			sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
+		end
+	end
+
+	if self.gib_type ~= "head_damege" and dmginfo:GetDamageType() == 4 or dmginfo:GetDamageType() == 1024 then
+		local hit = madness_GetClosestPhysBone(corpseEnt,dmginfo) --get hit physbone
+		if hit == nil then
+			return 
+		end
+		local bone = corpseEnt:TranslatePhysBoneToBone(hit)
+		local bone_name = corpseEnt:GetBoneName( bone ) 
+		if bone_name == "head" then
+
+			local distance = corpseEnt:GetBonePosition(corpseEnt:LookupBone("head")):Distance(dmginfo:GetDamagePosition())
+			if distance > 20 then
+				corpseEnt:SetBodygroup(1, 6)
+				if self.isVR == false then
+					ParticleEffect("blood_impact_red_01_goop",self:GetAttachment(self:LookupAttachment("head_gib")).Pos,self:GetAngles())
+					self:CreateGibEntity("prop_physics","models/noob_dev2323/madness/gibs/half_head.mdl",{Pos=corpseEnt:LocalToWorld(Vector(0,0,54)),Ang=corpseEnt:GetAngles()+Angle(0,0,0),Vel=corpseEnt:GetRight()*math.Rand(-350,350)+self:GetForward()*math.Rand(-200,-300)})	
+					sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
+				end
+			else 
+				sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
+				local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("head"))
+				corpseEnt:RemoveInternalConstraint(bone)
+				local head_bone = corpseEnt:LookupBone("head")
+				local bone = corpseEnt:TranslateBoneToPhysBone(head_bone)
+				local colide = corpseEnt:GetPhysicsObjectNum( bone )
+				colide:AddVelocity(dmginfo:GetDamageForce())
+			end
+		end
+		if bone_name == "torax" then
+			if self.HasGibDeathParticles == true then
+				local bloodeffect = EffectData()
+				bloodeffect:SetOrigin(self:GetPos() +self:OBBCenter())
+				bloodeffect:SetColor(VJ_Color2Byte(Color(130,19,10)))
+				bloodeffect:SetScale(50)
+				util.Effect("VJ_Blood1",bloodeffect)
+			end
+			sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", corpseEnt:GetPos(), 75, 100, 1)
+			local bone = corpseEnt:TranslateBoneToPhysBone(corpseEnt:LookupBone("torax"))
+			corpseEnt:RemoveInternalConstraint(bone)
+			local head_bone = corpseEnt:LookupBone("torax")
+			local bone = corpseEnt:TranslateBoneToPhysBone(head_bone)
+			local colide = corpseEnt:GetPhysicsObjectNum( bone )
+			colide:AddVelocity(Vector(0,0,999))
+			corpseEnt:SetBodygroup(0, 1)
 		end
 	end
 	if self.gib_type == "l_leg" then
