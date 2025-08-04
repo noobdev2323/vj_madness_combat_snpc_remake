@@ -21,7 +21,7 @@ ENT.RunAwayOnUnknownDamage = true -- Should run away on damage
 
 ENT.HasMeleeAttack = true -- Should the SNPC have a melee attack?
 ENT.MeleeAttackDamageType = DMG_CLUB
-ENT.AnimTbl_MeleeAttack = {"vjges_punch01","vjges_punch02"} -- Melee Attack Animations
+ENT.AnimTbl_MeleeAttack = {"vjges_punch01","vjges_punch02","vjges_melee_attack_01","vjges_melee_attack_02"} -- Melee Attack Animations
 ENT.MeleeAttackAnimationAllowOtherTasks = true -- If set to true, the animation will not stop other tasks from playing, such as chasing | Useful for gesture attacks!
 ENT.MeleeAttackDistance = 50 -- How close does it have to be until it attacks?
 ENT.MeleeAttackDamageDistance = 120 -- How far does the damage go?
@@ -108,6 +108,12 @@ function ENT:CustomOnTakeDamage_OnBleed(dmginfo, hitgroup)
 				self.gib_type = "R_leg"
 			end
 		end
+
+		if hitgroup == 13 or hitgroup == 14 or hitgroup == 17 or hitgroup == 16 or hitgroup == 15 and self.totalDamage[hitgroup] > 12000 and dmginfo:GetDamageType() ~= 4 then
+			if self.totalDamage[hitgroup] > 12000 then
+				self.gib_type = "head_less"
+			end
+        end
 	end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
