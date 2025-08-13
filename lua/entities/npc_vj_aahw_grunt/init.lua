@@ -136,6 +136,8 @@ function ENT:CustomOnDeath_AfterCorpseSpawned(dmginfo, hitgroup, corpseEnt)
 			local colide = corpseEnt:GetPhysicsObjectNum( i )
 			colide:EnableGravity(false)
 		end
+		dmginfo:SetDamageForce(dmginfo:GetDamageForce()/3)
+		corpseEnt:TakeDamageInfo(dmginfo)
 	else
 		dmginfo:SetDamageForce(dmginfo:GetDamageForce()/3)
 		corpseEnt:TakeDamageInfo(dmginfo)

@@ -1,0 +1,8 @@
+"UnlitGeneric"
+{
+	$basetexture "models/noob_dev2323/madness_combat/shaders/glow"
+	"$selfillum" 1
+	"$surfaceprop" "Flesh"
+	"$reflectivity" "[0 0 0]"
+	"$nodecal" "1"
+}

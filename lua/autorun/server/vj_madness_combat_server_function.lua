@@ -35,7 +35,7 @@ hook.Add("EntityTakeDamage", "EntityMadness_ent_TakeDamage", function(target, dm
 			if dmgType == DMG_CRUSH && dmginfo:GetDamage() < 500 then
 				doDamege = false 
 			elseif dmginfo:IsExplosionDamage() && dmg_force >= 10 then 
-				dmginfo:ScaleDamage(3) --escale the damege on explosions     
+				dmginfo:ScaleDamage(4) --escale the damege on explosions     
 			end 
 			local hit = madness_GetClosestPhysBone(target,dmginfo) --get hit physbone
 			if hit == nil then
@@ -79,6 +79,7 @@ hook.Add("EntityTakeDamage", "EntityMadness_ent_TakeDamage", function(target, dm
 		end 
 	end
 end)
+local defGibs_Red = {"models/noob_dev2323/madness/gibs/gib01.mdl","models/noob_dev2323/madness/gibs/gib02.mdl","models/noob_dev2323/madness/gibs/gib01.mdl","models/noob_dev2323/madness/gibs/gib02.mdl","models/noob_dev2323/madness/gibs/gib01.mdl","models/noob_dev2323/madness/gibs/gib02.mdl"}
 function madness_ragdoll_gib(target,dmg_force)
 	if IsValid(target) then
 		if !target.Head_gibbed then
@@ -88,6 +89,12 @@ function madness_ragdoll_gib(target,dmg_force)
 			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk5.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force)
 			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk6.mdl",target:GetAttachment(target:LookupAttachment("4")).Pos,dmg_force)
 			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk4.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force)			
+		end
+		local centerPos = target:GetPos() + target:OBBCenter()
+		local gibMaxs = target:OBBMaxs()
+		local gibMins = target:OBBMins()
+		for _, v in ipairs(defGibs_Red) do
+			madness_make_vj_gibs(v,centerPos + Vector(math.random(gibMins.x, gibMaxs.x), math.random(gibMins.y, gibMaxs.y), 10),dmg_force)		
 		end
 		local bloodeffect = EffectData()
 		bloodeffect:SetOrigin(target:GetPos() +target:OBBCenter())
