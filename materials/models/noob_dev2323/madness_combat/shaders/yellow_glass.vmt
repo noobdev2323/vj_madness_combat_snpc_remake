@@ -1,0 +1,6 @@
+VertexLitGeneric
+{
+	$basetexture "models/noob_dev2323/madness_combat/shaders/yellow_glass"
+	$nodecal 1
+	$translucent 1
+}
