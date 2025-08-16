@@ -1,0 +1,6 @@
+ENT.Base 		= "npc_vj_aahw_grunt"
+ENT.Type 		= "ai"
+ENT.PrintName 		= "aahwa_agent"
+ENT.Author 		= "noob_dev2323"
+ENT.Contact 		= "http://steamcommunity.com/groups/vrejgaming"
+ENT.Category		= "madness combat remake"

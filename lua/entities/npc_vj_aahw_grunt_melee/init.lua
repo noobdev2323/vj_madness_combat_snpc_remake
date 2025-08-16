@@ -16,33 +16,42 @@ function ENT:CustomOnInitialize()
 	self.GetDamageType = {} --need to gib work
 	self.gib_type = "ok"
 	self.melee = true 
+
 	local melee = math.random(1,4)
+	self.melee_type = melee 
+
 	if melee == 1 then
-		bonemerge_prop_on_npc("models/noob_dev2323/madness/weapons/w_bowieKnife.mdl",self)
+
+		self.melee_model = "models/noob_dev2323/madness/weapons/w_bowieKnife.mdl"
 		self.MeleeAttackDamage = 35
 		self.MeleeAttackDamageType = DMG_SLASH
 		self.AnimTbl_MeleeAttack = {"vjges_stab","vjges_melee_attack_01","vjges_melee_attack_02"}
 		self.SoundTbl_MeleeAttack = {"noob_dev2323/madness/melee/slash_01.wav","noob_dev2323/madness/melee/slash_02.wav","noob_dev2323/madness/melee/slash_03.wav","noob_dev2323/madness/melee/slash_04.wav"}
 	elseif melee == 2 then
-		bonemerge_prop_on_npc("models/noob_dev2323/madness/weapons/w_iron_knife.mdl",self)
+		self.melee_model = "models/noob_dev2323/madness/weapons/w_iron_knife.mdl"
 		self.MeleeAttackDamage = 35
 		self.MeleeAttackDamageType = DMG_SLASH
 		self.AnimTbl_MeleeAttack = {"vjges_stab","vjges_melee_attack_01","vjges_melee_attack_02"}
 		self.SoundTbl_MeleeAttack = {"noob_dev2323/madness/melee/slash_01.wav","noob_dev2323/madness/melee/slash_02.wav","noob_dev2323/madness/melee/slash_03.wav","noob_dev2323/madness/melee/slash_04.wav"}
 	elseif melee == 3 then
-		bonemerge_prop_on_npc("models/noob_dev2323/madness/weapons/w_bat.mdl",self)
+		self.melee_model = "models/noob_dev2323/madness/weapons/w_bat.mdl"
 		self.MeleeAttackDamage = 35
 		self.MeleeAttackDamageType = DMG_CLUB
 		self.AnimTbl_MeleeAttack = {"vjges_melee_attack_01"}
 		self.SoundTbl_MeleeAttack = {"noob_dev2323/madness/melee/Hit_1.wav","noob_dev2323/madness/melee/Hit_2.wav","noob_dev2323/madness/melee/Hit_3.wav"}
 	elseif melee == 4 then
-		bonemerge_prop_on_npc("models/noob_dev2323/madness/weapons/w_hammer.mdl",self)
+		self.melee_model = "models/noob_dev2323/madness/weapons/w_hammer.mdl"
 		self.MeleeAttackDamage = 20
 		self.MeleeAttackDamageType = DMG_CLUB
 		self.AnimTbl_MeleeAttack = {"vjges_melee_attack_01"}
 		self.SoundTbl_MeleeAttack = {"noob_dev2323/madness/melee/Hit_1.wav","noob_dev2323/madness/melee/Hit_2.wav","noob_dev2323/madness/melee/Hit_3.wav"}
 	end
+	bonemerge_prop_on_npc(self.melee_model,self)
 	print(melee)
+end
+
+function ENT:CustomOnKilled(dmginfo,hitgroup)
+	self:CreateGibEntity("prop_physics",self.melee_model,{Pos=self:GetBonePosition(self:LookupBone("R_hand")),Ang=select(2, self:GetBonePosition(self:LookupBone("R_hand"))),Vel=self:GetRight()*math.Rand(-350,350)+self:GetForward()*math.Rand(-200,-300)})
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- All functions and variables are located inside the base files. It can be found in the GitHub Repository: https://github.com/DrVrej/VJ-Base
