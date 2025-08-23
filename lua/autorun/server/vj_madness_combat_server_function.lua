@@ -79,26 +79,36 @@ hook.Add("EntityTakeDamage", "EntityMadness_ent_TakeDamage", function(target, dm
 		end 
 	end
 end)
-local defGibs_Red = {"models/noob_dev2323/madness/gibs/gib01.mdl","models/noob_dev2323/madness/gibs/gib02.mdl","models/noob_dev2323/madness/gibs/gib01.mdl","models/noob_dev2323/madness/gibs/gib02.mdl","models/noob_dev2323/madness/gibs/gib01.mdl","models/noob_dev2323/madness/gibs/gib02.mdl"}
+local gibs_table_Red = {"models/noob_dev2323/madness/gibs/gib01.mdl","models/noob_dev2323/madness/gibs/gib02.mdl","models/noob_dev2323/madness/gibs/gib01.mdl","models/noob_dev2323/madness/gibs/gib02.mdl","models/noob_dev2323/madness/gibs/gib01.mdl","models/noob_dev2323/madness/gibs/gib02.mdl"}
+local gibs_table_yellow = {"models/noob_dev2323/madness/gibs/gib03.mdl","models/noob_dev2323/madness/gibs/gib03.mdl","models/noob_dev2323/madness/gibs/gib04.mdl","models/noob_dev2323/madness/gibs/gib04.mdl","models/noob_dev2323/madness/gibs/gib04.mdl","models/noob_dev2323/madness/gibs/gib03.mdl"}
 function madness_ragdoll_gib(target,dmg_force)
+	local sigma_table = nil
 	if IsValid(target) then
+		if target:GetSkin() == 2 then
+			sigma_table = gibs_table_yellow
+		else
+			sigma_table = gibs_table_Red
+		end
 		if !target.Head_gibbed then
-			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk2.mdl",target:GetAttachment(target:LookupAttachment("2")).Pos,dmg_force)
-			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk1.mdl",target:GetAttachment(target:LookupAttachment("5")).Pos,dmg_force)
-			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk3.mdl",target:GetAttachment(target:LookupAttachment("head")).Pos,dmg_force)
-			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk5.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force)
-			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk6.mdl",target:GetAttachment(target:LookupAttachment("4")).Pos,dmg_force)
-			madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk4.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force)			
+			madness_gib_head(target,dmg_force)
 		end
 		local centerPos = target:GetPos() + target:OBBCenter()
 		local gibMaxs = target:OBBMaxs()
 		local gibMins = target:OBBMins()
-		for _, v in ipairs(defGibs_Red) do
-			madness_make_vj_gibs(v,centerPos + Vector(math.random(gibMins.x, gibMaxs.x), math.random(gibMins.y, gibMaxs.y), 10),dmg_force)		
+		for _, v in ipairs(sigma_table) do
+			if target:GetSkin() == 2 then
+				madness_make_vj_gibs(v,centerPos + Vector(math.random(gibMins.x, gibMaxs.x), math.random(gibMins.y, gibMaxs.y), 10),dmg_force,true )		
+			else
+				madness_make_vj_gibs(v,centerPos + Vector(math.random(gibMins.x, gibMaxs.x), math.random(gibMins.y, gibMaxs.y), 10),dmg_force)		
+			end
 		end
 		local bloodeffect = EffectData()
 		bloodeffect:SetOrigin(target:GetPos() +target:OBBCenter())
-		bloodeffect:SetColor(VJ_Color2Byte(Color(130,19,10)))
+		if target:GetSkin() == 2 then
+			bloodeffect:SetColor(VJ_Color2Byte(Color(229,255,0)))
+		else
+			bloodeffect:SetColor(VJ_Color2Byte(Color(130,19,10)))
+		end
 		bloodeffect:SetScale(50)
 		util.Effect("VJ_Blood1",bloodeffect)
 		target:Remove()
@@ -138,19 +148,31 @@ end
 function madness_gib_head(target,dmg_force)
 	local bloodeffect = EffectData()
 	bloodeffect:SetOrigin(target:GetAttachment(target:LookupAttachment("head_gib")).Pos)
-	bloodeffect:SetColor(VJ_Color2Byte(Color(130,19,10)))
+	if target:GetSkin() == 2 then
+		bloodeffect:SetColor(VJ_Color2Byte(Color(229,255,0)))
+	else
+		bloodeffect:SetColor(VJ_Color2Byte(Color(130,19,10)))
+	end
 	bloodeffect:SetScale(50)
 	util.Effect("VJ_Blood1",bloodeffect)
 	sound.Play("noob_dev2323/madness/gore/Dissmember" .. math.random(1,5) .. ".wav", target:GetPos(), 75, 100, 1)
 	madness_physbone_colide(target,"head")
 	local head_bone = target:LookupBone( "head" )
 	target:ManipulateBoneScale(head_bone,Vector(0,0,0))
-	madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk2.mdl",target:GetAttachment(target:LookupAttachment("2")).Pos,dmg_force)
-	madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk1.mdl",target:GetAttachment(target:LookupAttachment("5")).Pos,dmg_force)
-	madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk3.mdl",target:GetAttachment(target:LookupAttachment("head")).Pos,dmg_force)
-	madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk5.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force)
-	madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk6.mdl",target:GetAttachment(target:LookupAttachment("4")).Pos,dmg_force)
-	madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk4.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force)
+	if target:GetSkin() == 2 then 
+		madness_make_vj_gibs("models/noob_dev2323/madness/gibs/gib03.mdl",target:GetAttachment(target:LookupAttachment("2")).Pos,dmg_force,true )
+		madness_make_vj_gibs("models/noob_dev2323/madness/gibs/gib03.mdl",target:GetAttachment(target:LookupAttachment("5")).Pos,dmg_force,true)
+		madness_make_vj_gibs("models/noob_dev2323/madness/gibs/gib04.mdl",target:GetAttachment(target:LookupAttachment("head")).Pos,dmg_force,true)
+		madness_make_vj_gibs("models/noob_dev2323/madness/gibs/gib03.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force,true )
+		madness_make_vj_gibs("models/noob_dev2323/madness/gibs/gib04.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force,true)
+	else
+		madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk2.mdl",target:GetAttachment(target:LookupAttachment("2")).Pos,dmg_force)
+		madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk1.mdl",target:GetAttachment(target:LookupAttachment("5")).Pos,dmg_force)
+		madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk3.mdl",target:GetAttachment(target:LookupAttachment("head")).Pos,dmg_force)
+		madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk5.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force)
+		madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk6.mdl",target:GetAttachment(target:LookupAttachment("4")).Pos,dmg_force)
+		madness_make_vj_gibs("models/noob_dev2323/madness/gibs/head_chunk4.mdl",target:GetAttachment(target:LookupAttachment("head_gib")).Pos,dmg_force)
+	end
 end
 function madness_physbone_colide(target,bone,disable_motion)
 	local colide = target:GetPhysicsObjectNum(target:TranslateBoneToPhysBone(target:LookupBone(bone))) --get bone id
@@ -168,15 +190,19 @@ function bonemerge_prop_on_npc(model,ent)
 	ent.bonemerge_prop:SetSolid(SOLID_NONE)
 	ent.bonemerge_prop:AddEffects(EF_BONEMERGE)
 end
-function madness_make_vj_gibs(model,pos,dmg_force)
+function madness_make_vj_gibs(model,pos,dmg_force,yellow)
 	local gib = ents.Create("obj_vj_gib")
 	gib:SetModel(model)
 	gib:SetPos(pos)
 	gib:SetAngles(Angle(math.Rand(-180, 180), math.Rand(-180, 180), math.Rand(-180, 180)))
 	gib:Spawn()
 	gib:Activate()
+	if yellow then
+		gib.CollisionDecal = {"VJ_AAWH_GRUNT_YELLOW_BLOOD"}
+	else
+		gib.CollisionDecal = {"VJ_AAWH_GRUNT_BLOOD"}		
+	end
 	gib.BloodType = VJ.BLOOD_COLOR_RED
-	gib.CollisionDecal = {"VJ_AAWH_GRUNT_BLOOD"}
 	local phys = gib:GetPhysicsObject()
 	if IsValid(phys) then
 		phys:AddVelocity(Vector(math.Rand(-100, 100), math.Rand(-100, 100), math.Rand(150, 250)) + (dmg_force / 20))

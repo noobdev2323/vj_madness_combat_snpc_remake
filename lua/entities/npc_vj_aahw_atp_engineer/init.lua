@@ -6,7 +6,7 @@ include('shared.lua')
 	without the prior written consent of the author, unless otherwise indicated for stand-alone materials.
 -----------------------------------------------*/
 ENT.Model = {"models/noob_dev2323/madness/npc/grunt_npc.mdl"} -- The game will pick a random model from the table when the SNPC is spawned | Add as many as you want
-ENT.StartHealth = 20
+ENT.StartHealth = 30
 ENT.Weapon_Disabled = false   -- Disable the ability for it to use weapons
 ENT.Weapon_IgnoreSpawnMenu = false  -- Should it ignore weapon overrides from the spawn menu?
 ENT.BloodDecal = {"VJ_AAWH_GRUNT_YELLOW_BLOOD"}
@@ -15,8 +15,10 @@ function ENT:CustomOnInitialize()
 	self.totalDamage = {}
 	self.GetDamageType = {} --need to gib work
 	self.gib_type = "ok"
+	self.is_yellow_blood = true 
+	self.protect = true
 	self:SetBodygroup(2, 3)
-	self:SetSkin(3)
+	self:SetSkin(2)
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------
 	-- All functions and variables are located inside the base files. It can be found in the GitHub Repository: https://github.com/DrVrej/VJ-Base
